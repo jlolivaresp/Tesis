@@ -21,7 +21,7 @@ def caudal(set_point, longitud, paso, ruido=False):
 
     import numpy as np
 
-    Q = np.ones([1, longitud/paso])*set_point
+    Q = np.ones(longitud/paso)*set_point
 
     if ruido:
         np.random.seed(0)
