@@ -17,11 +17,11 @@ Parametros de salida
 '''
 
 
-def caudal(set_point, longitud, ruido=False):
+def caudal(set_point, longitud, paso, ruido=False):
 
     import numpy as np
 
-    Q = np.ones([1,longitud])*set_point
+    Q = np.ones([1, longitud/paso])*set_point
 
     if ruido:
         np.random.seed(0)
