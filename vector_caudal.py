@@ -8,6 +8,7 @@ Parametros de entrada
 
     set_point: Valor que tendra el caudal a lo largo del vector
     longitud: Longitud del vector
+    paso: Paso de integracion
     ruido: De ser True, el vector tendra ruido gausiano.
 
 Parametros de salida
