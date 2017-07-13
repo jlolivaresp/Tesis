@@ -25,7 +25,7 @@ def aumento_gradual_r(r_inicial, r_final, longitud, t_inicial, t_final, paso):
 
     import numpy as np
 
-    R = np.ones(longitud/paso)
+    R = np.ones(longitud/paso)*r_inicial
     R[t_inicial:t_final] = np.arange(r_inicial, r_final, (r_final-r_inicial)/((t_final-t_inicial)/paso))
     R[t_final:] = np.ones(longitud-t_final)*r_final
 
