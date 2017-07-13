@@ -26,6 +26,6 @@ def caudal(set_point, longitud, paso, ruido=False):
 
     if ruido:
         np.random.seed(0)
-        Q += 0.01*np.random.normal(0, 1, longitud)
+        Q += set_point*0.01*np.random.normal(0, 1, longitud)
 
     return Q
