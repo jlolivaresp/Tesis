@@ -57,6 +57,10 @@ ax1.vlines(t_inicial_falla,0, max(df_obstruccion_gradual_valvula_salida['nivel_t
 ax2.vlines(t_inicial_falla,0, max(df_obstruccion_gradual_valvula_salida['res_hidraulica']),
            colors='r',label='Inicio de falla')
 df_obstruccion_gradual_valvula_salida['res_hidraulica'].plot(ax=ax2,c='g')
+ax2.set_ylim([df_obstruccion_gradual_valvula_salida['res_hidraulica'].min()-
+              0.1*df_obstruccion_gradual_valvula_salida['res_hidraulica'].min(),
+              df_obstruccion_gradual_valvula_salida['res_hidraulica'].max()+
+              0.1*df_obstruccion_gradual_valvula_salida['res_hidraulica'].max()])
 plt.xlabel('Tiempo (h)')
 ax1.legend(loc='best')
 ax2.legend(loc='best')
