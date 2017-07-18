@@ -11,42 +11,54 @@ caudal_entrada: Caudal de entrada
 tiempo_inicial: Tiempo inicial desde el cual se quiere simular el comportamiento
 tiempo_final: Tiempo final desde el cual se quiere simular el comportamiento
 paso: El incremento de tiempo entre ti y tf
+analitic_sol: True si se desea la solucion analitica
 
 Los parametros de salida son:
 vector_H: vector de alturas H en funcion del tiempo
 """
 
-def simultank(area, nivel_inicial, resist_hidraulica, caudal_entrada, tiempo_inicial, tiempo_final, paso):
+
+def simultank(area, nivel_inicial, resist_hidraulica, caudal_entrada,
+              tiempo_inicial, tiempo_final, paso, analitic_sol=False):
 
     import numpy as np
+    from math import exp
 
-    vector_tiempo = np.arange(tiempo_inicial, tiempo_final, paso)
+    vector_H = []
 
-    K1 = paso*(caudal_entrada[0]/area - nivel_inicial/(area*resist_hidraulica[0]))
-    K2 = paso*(caudal_entrada[0]/area - (nivel_inicial + K1/2)/(area*resist_hidraulica[0]))
-    K3 = paso*(caudal_entrada[0]/area - (nivel_inicial + K2/2)/(area*resist_hidraulica[0]))
-    K4 = paso*(caudal_entrada[0]/area - (nivel_inicial + K3)/(area*resist_hidraulica[0]))
+    if analitic_sol == False:
 
-    H_mas_1 = nivel_inicial + (1/6)*(K1 + 2*K2 + 2*K3 + K4)
-    vector_H = np.array([nivel_inicial, H_mas_1])
+        vector_tiempo = np.arange(tiempo_inicial, tiempo_final, paso)
 
-    iteraciones = len(vector_tiempo)
-    contador = 1
+        K1 = paso*(caudal_entrada[0]/area - nivel_inicial/(area*resist_hidraulica[0]))
+        K2 = paso*(caudal_entrada[0]/area - (nivel_inicial + K1/2)/(area*resist_hidraulica[0]))
+        K3 = paso*(caudal_entrada[0]/area - (nivel_inicial + K2/2)/(area*resist_hidraulica[0]))
+        K4 = paso*(caudal_entrada[0]/area - (nivel_inicial + K3)/(area*resist_hidraulica[0]))
 
-    while contador < iteraciones - 1:
+        H_mas_1 = nivel_inicial + (1/6)*(K1 + 2*K2 + 2*K3 + K4)
+        vector_H = np.array([nivel_inicial, H_mas_1])
 
-        ''' Aplicamos RK4
-        '''
+        iteraciones = len(vector_tiempo)
+        contador = 1
 
-        K1 = paso*(caudal_entrada[contador]/area - H_mas_1/(area*resist_hidraulica[contador]))
-        K2 = paso*(caudal_entrada[contador]/area - (H_mas_1 + K1/2)/(area*resist_hidraulica[contador]))
-        K3 = paso*(caudal_entrada[contador]/area - (H_mas_1 + K2/2)/(area*resist_hidraulica[contador]))
-        K4 = paso*(caudal_entrada[contador]/area - (H_mas_1 + K3)/(area*resist_hidraulica[contador]))
+        while contador < iteraciones - 1:
 
-        H_mas_1 = np.array([H_mas_1 + (1/6)*(K1 + 2*K2 + 2*K3 + K4)])
+            ''' Aplicamos RK4
+            '''
 
-        contador += 1
+            K1 = paso*(caudal_entrada[contador]/area - H_mas_1/(area*resist_hidraulica[contador]))
+            K2 = paso*(caudal_entrada[contador]/area - (H_mas_1 + K1/2)/(area*resist_hidraulica[contador]))
+            K3 = paso*(caudal_entrada[contador]/area - (H_mas_1 + K2/2)/(area*resist_hidraulica[contador]))
+            K4 = paso*(caudal_entrada[contador]/area - (H_mas_1 + K3)/(area*resist_hidraulica[contador]))
 
-        vector_H = np.append(vector_H, H_mas_1)
+            H_mas_1 = np.array([H_mas_1 + (1/6)*(K1 + 2*K2 + 2*K3 + K4)])
+
+            contador += 1
+
+            vector_H = np.append(vector_H, H_mas_1)
+
+    else:
+        vector_H = [(nivel_inicial - q*r)*exp(- t/(area*r)) + q*r for q, r, t in
+                    zip(caudal_entrada, resist_hidraulica, np.arange(tiempo_inicial, tiempo_final, paso))]
 
     return vector_H
