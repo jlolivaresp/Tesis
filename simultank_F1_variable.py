@@ -43,7 +43,7 @@ def simultank(area, nivel_inicial, resist_hidraulica, caudal_entrada, tiempo_ini
         K3 = paso*(caudal_entrada[contador]/area - (H_mas_1 + K2/2)/(area*resist_hidraulica[contador]))
         K4 = paso*(caudal_entrada[contador]/area - (H_mas_1 + K3)/(area*resist_hidraulica[contador]))
 
-        H_mas_1 = np.array([nivel_inicial + (1/6)*(K1 + 2*K2 + 2*K3 + K4)])
+        H_mas_1 = np.array([H_mas_1 + (1/6)*(K1 + 2*K2 + 2*K3 + K4)])
 
         contador += 1
 
