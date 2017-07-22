@@ -22,13 +22,13 @@ class fault_generator(object):
         faulty_fraction = (stop-start)/(step*len(vector_faulty))
         return vector_faulty, faulty_fraction
 
-    def random_pulse(self, start, N, amplitude, mode = 'random'):
+    def random_pulse(self, start, stop, N, amplitude, mode = 'random'):
 
         import numpy as np
         import random
 
         vector_faulty = np.copy(self.Vector_non_faulty)
-        after_fault = vector_faulty[start:]
+        after_fault = vector_faulty[start:stop]
         position_after_fault = np.asarray(list(enumerate(after_fault,start=start)))
 
         rand_sample_after_fault = position_after_fault[random.sample(range(0, len(position_after_fault)), N), :]
@@ -42,4 +42,6 @@ class fault_generator(object):
             for j in pulsed_values:
                 vector_faulty[j[0]] = j[1]
 
-        return vector_faulty
+        faulty_fraction = N/len(vector_faulty)
+
+        return vector_faulty, faulty_fraction
