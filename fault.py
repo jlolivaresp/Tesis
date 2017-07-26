@@ -85,11 +85,11 @@ class fault_generator(object):
         vector_faulty = np.copy(self.Vector_non_faulty)
         vector_faulty[start/step:stop/step] += np.linspace(0, change, (stop-start)/step)
         vector_faulty[stop/step:] += change
-        faulty_fraction = (stop-start)/(step*len(vector_faulty))
+        slope = change*step/(stop-start)
         drifted_positions_bool = vector_faulty - self.Vector_non_faulty
         drifted_positions_bool = drifted_positions_bool != 0
 
-        return vector_faulty, faulty_fraction, drifted_positions_bool
+        return vector_faulty, slope, drifted_positions_bool
 
     def variance(self, start, stop, step, stand_dev):
 
@@ -103,14 +103,14 @@ class fault_generator(object):
 
         return vector_faulty, faulty_fraction, varianced_positions_bool
 
-    def random_pulse(self, start, stop, N, amplitude, mode = 'random'):
+    def random_pulse(self, start, stop, step, N, amplitude, mode = 'random'):
 
         import numpy as np
         import random
 
         vector_faulty = np.copy(self.Vector_non_faulty)
-        after_fault = vector_faulty[start:stop]
-        position_after_fault = np.asarray(list(enumerate(after_fault,start=start)))
+        after_fault = vector_faulty[start/step:stop/step]
+        position_after_fault = np.asarray(list(enumerate(after_fault,start=int(start/step))))
 
         rand_sample_after_fault = position_after_fault[random.sample(range(0, len(position_after_fault)), N), :]
 
