@@ -103,7 +103,7 @@ class fault_generator(object):
 
         return vector_faulty, faulty_fraction, varianced_positions_bool
 
-    def random_pulse(self, start, stop, step, N, amplitude, mode = 'random'):
+    def random_pulse(self, start, stop, step, N, amplitude, random_seed=0, mode='random'):
 
         import numpy as np
         import random
@@ -115,6 +115,7 @@ class fault_generator(object):
         rand_sample_after_fault = position_after_fault[random.sample(range(0, len(position_after_fault)), N), :]
 
         if mode == 'random':
+            np.random.seed(random_seed)
             pulsed_values = [[i[0], i[1] + abs(np.random.normal(0, amplitude))] for i in rand_sample_after_fault]
             for j in pulsed_values:
                 vector_faulty[j[0]] = j[1]
