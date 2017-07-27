@@ -20,7 +20,7 @@ import matplotlib as mpl
 '''
 Prueba de funciones simultank, vector_caudal y aumento_gradual_r
 '''
-
+'''
 r_inicial = 0.28            # Valor inicial de la resistencia hidraulica
 r_final = 0.32              # Valor final de la resistencia hidraulica
 longitud = 1000               # Tiempo de simulacion [h]
@@ -101,7 +101,7 @@ plt.xlabel('Tiempo (h)')
 plt.legend()
 plt.tight_layout()
 
-'''
+
 # Comparacion de pasos con solucion analitica
 plt.figure(figsize=(9, 5))
 for paso in np.logspace(-4,0,5,endpoint=True):
@@ -124,8 +124,8 @@ plt.ylabel('Nivel (m)')
 plt.xlabel('Tiempo (h)')
 plt.legend()
 plt.tight_layout()
-#plt.show()'''
-
+#plt.show()
+'''
 # # Deteccion de fallas t-test
 
 # Drift: Resistencia hidraulica - Variacion de la pendiente del drift y del tamano de la ventana de prueba
@@ -152,7 +152,6 @@ r = np.ones(longitud/paso)*r_inicial
 true_positives = np.zeros([len(t_f_falla_drift), len(window_size)])
 false_positives = np.zeros([len(t_f_falla_drift), len(window_size)])
 Q = caudal(set_point=q_set,longitud=longitud,paso=paso,factor_ruido=0.01,ruido=True)
-plt.tight_layout()
 for i in delta_r:
     pendiente = np.array([])
     for j,jj in zip(t_f_falla_drift,range(0,len(t_f_falla_drift))):
@@ -161,6 +160,7 @@ for i in delta_r:
         nivel = simultank(area=area,nivel_inicial=nivel_inicial,resist_hidraulica=r_falla,caudal_entrada=Q,
                           tiempo_inicial=0,tiempo_final=longitud,paso=paso,analitic_sol=False)
         pendiente = np.append(pendiente,[slope])
+        fign = plt.figure(figsize=(10,6))
         for k,kk in zip(window_size,range(0,len(window_size))):
             print(k)
             vector_detected, y_pred, nro_fallas, N_auto = f.fault_detector(
@@ -170,41 +170,55 @@ for i in delta_r:
             tn, fp, fn, tp = confusion_matrix(y_true=y_test[tss_2:], y_pred=y_pred).ravel()
             true_positives[jj, kk] = tp/(tp+fn)
             false_positives[jj, kk] = fp/(fp+tp)
-            if i == delta_r[1] and k == window_size[-1]:
-                plt.figure()
-                plt.plot(tiempo,nivel,label='Tank level')
-                tiempo_falla = tiempo[tss_2:][y_pred == 1]
-                plt.scatter(tiempo_falla,vector_detected,c='r',marker='o',alpha=0.2,label='Fault Detected')
-                plt.title('Faults detected for tank level simulation\nwindow size = {}, with drift in Hydraulic '
-                          'Resistance from 0.28 to {:.2f}'.format(k,i + 0.28))
-                if k == window_size[-1]:
-                    plt.title('Faults detected for tank level simulation\nwindow size = {}, with drift in Hydraulic '
-                              'Resistance from 0.28 to {:.2f}'.format(N_auto,i + 0.28))
-                plt.xlabel('Time (h)')
-                plt.ylabel('Tank Level (m)')
-                plt.legend()
-    pendiente_y =['{:.2e}'.format(i) for i in pendiente]
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    sbn.heatmap(true_positives, annot=True, xticklabels=windows_size_x_labels, yticklabels=pendiente_y, ax=ax)
-    plt.yticks(rotation=0)
-    plt.title('True Positive Rate (FDR)\nMoving window t-test (95% confidence, Mean change detected = 1.0%)\n'
-              'in Tank level simulation with drift in Hydraulic Resistance from 0.28 to {:.2f}'.format(0.28+i))
-    plt.xlabel('Window size')
-    plt.ylabel('Drift Slope')
-    fig1 = plt.figure()
-    ax1 = fig1.add_subplot(111)
-    sbn.heatmap(false_positives, annot=True, xticklabels=windows_size_x_labels, yticklabels=pendiente_y, ax=ax1)
-    plt.yticks(rotation=0)
-    plt.title('False Positive Rate (FAR)\nMoving window t-test (95% confidence, Mean change detected = 1.0%)\n'
-              'in Tank level simulation with drift in Hydraulic Resistance from 0.28 to {:.2f}'.format(0.28+i))
-    plt.xlabel('Window size')
-    plt.ylabel('Drift Slope')
+
+            tiempo_falla = tiempo[tss_2:][y_pred == 1]
+
+            ax = fign.add_subplot(2,4,kk+1)
+            ax.plot(tiempo,nivel,label='Tank level')
+            ax.scatter(tiempo_falla,vector_detected,c='r',marker='o',alpha=0.2,label='Fault Detected')
+            if k == window_size[-1]:
+                plt.title('N = {} (auto)'.format(N_auto))
+            plt.title('N = {}'.format(N_auto))
+            plt.xlabel('Time (h)')
+            plt.ylabel('Tank Level (m)')
+            plt.legend(loc=4)
+            if kk > 0 and kk != 4:
+                plt.gca().axes.yaxis.set_ticklabels([])
+                ax.set_ylabel('')
+            if kk < 4:
+                plt.gca().axes.xaxis.set_ticklabels([])
+                ax.set_xlabel('')
+        fign.tight_layout()
+        fign.subplots_adjust(top=0.85)
+        fign.suptitle('Tank Levels for Drift in Hydraulic Resistance (HR) Exit Valve\nChange in HR from 0.28 to {:.2f} '
+                      'Drift Slope = {:.2e} and Window Size N'.format(0.28+i,slope), size=14)
+        fign.savefig('C:/Users/User/Documents/Python/Tesis/Resultados/t-test/{}-{}.png'.format(i,jj))
+    pendiente_y = ['{:.2e}'.format(ii) for ii in pendiente]
+
+    fig, (ax1,ax2,ax_cbar) = plt.subplots(1, 3, gridspec_kw={'width_ratios': [1, 1, 0.08]}, figsize=(12,5))
+    ax1.get_shared_y_axes().join(ax2)
+    g1 = sbn.heatmap(true_positives, annot=True, xticklabels=windows_size_x_labels,
+                     yticklabels=pendiente_y, ax=ax1, vmin=0, vmax=1, cbar=False)
+    g2 = sbn.heatmap(false_positives, annot=True, xticklabels=windows_size_x_labels,
+                     yticklabels=pendiente_y, ax=ax2, vmin=0, vmax=1, cbar_ax=ax_cbar)
+    ax1.set_title('FDR')
+    ax1.set_ylabel('Change Slope')
+    ax1.set_xlabel('Window Size')
+    ax2.set_title('FAR')
+    ax2.set_xlabel('Window Size')
+    ax1.set_yticklabels(ax1.get_yticklabels(), rotation=0)
+    ax2.axes.get_yaxis().set_visible(False)
+    plt.tight_layout()
+    fig.subplots_adjust(top=0.83)
+    fig.suptitle('Fault Detection Indexes in Tank Level Simulation by Mean Change Detection\nt-test (95% '
+                 'Conf-Lev) on Drifted Hydraulic Resistance (HR) Exit Valve (Change in HR from 0.28 to {:.2f})'.
+                 format(0.28+i), size=15)
+    fig.savefig('C:/Users/User/Documents/Python/Tesis/Resultados/t-test/{}.png'.format(i))
 plt.show()
 '''
 
 # pulse: lecturas del sensor variando la densidad de pulsasiones
-
+'''
 r_inicial = 0.28                        # Valor inicial de la resistencia hidraulica
 longitud = 360                         # Tiempo de simulacion [h] (15 dias)
 paso = 0.1                              # Paso de integracion [h]
@@ -228,7 +242,6 @@ r = np.ones(longitud/paso)*r_inicial
 true_positives = np.zeros([len(N_faults), len(window_size)])
 false_positives = np.zeros([len(N_faults), len(window_size)])
 Q = caudal(set_point=q_set,longitud=longitud,paso=paso,factor_ruido=0.01,ruido=True)
-plt.tight_layout()
 frac_injected=0
 for i in pulse_intensity:
     frac_injected_y = np.array([])
@@ -256,7 +269,7 @@ for i in pulse_intensity:
             ax = fign.add_subplot(2,4,kk+1)
             ax.plot(tiempo,nivel_falla,label='Tank level')
             ax.scatter(tiempo_falla,vector_detected,c='r',marker='o',alpha=0.2,label='Fault Detected')
-            plt.title('N = {}'.format(k))
+            plt.title('N = {}'.format(N_auto))
             plt.xlabel('Time (h)')
             plt.ylabel('Tank Level (m)')
             plt.legend(loc=4)
@@ -271,7 +284,7 @@ for i in pulse_intensity:
         fign.suptitle('Normally Distributed Pulsed Sensor Readings for Tank Level\nStandard Deviation = {:.2f}, Fault '
                       'Density = {:.3f} and Window Size N'.format(i,frac_injected), size=14)
         frac_injected_y = np.append(frac_injected_y,[frac_injected])
-        #fign.savefig('C:/Users/User/Documents/Python/Tesis/Resultados/t-test/{}-{}.png'.format(i,jj),dpi=1000)
+        fign.savefig('C:/Users/User/Documents/Python/Tesis/Resultados/t-test/{}-{}.png'.format(i,jj))
     frac_injected_y_label = ['{:.3f}'.format(frac) for frac in frac_injected_y]
 
     fig, (ax1,ax2,ax_cbar) = plt.subplots(1, 3, gridspec_kw={'width_ratios': [1, 1, 0.08]}, figsize=(12,5))
@@ -290,9 +303,100 @@ for i in pulse_intensity:
     plt.tight_layout()
     fig.subplots_adjust(top=0.83)
     fig.suptitle('Fault Detection Indexes in Tank Level Simulation by Mean Change Detection\nt-test (95% '
-                 'Conf-Lev) on Normally Distributed Pulsed Sensor Readings (std = {i})', size=15)
-    #fig.savefig('C:/Users/User/Documents/Python/Tesis/Resultados/t-test/{}.png'.format(i),dpi=1000)
+                 'Conf-Lev) on Normally Distributed Pulsed Sensor Readings (std = {:.2f})'.format(i), size=15)
+    fig.savefig('C:/Users/User/Documents/Python/Tesis/Resultados/t-test/{}.png'.format(i))
 
+plt.show()
+'''
+
+# Variance
+
+r_inicial = 0.28                        # Valor inicial de la resistencia hidraulica
+longitud = 360                         # Tiempo de simulacion [h] (15 dias)
+paso = 0.1                              # Paso de integracion [h]
+decimal = str(paso)[::-1].find('.')     # Numero de decimales del paso
+q_set = 24                              # Caudal de entrada [m^3/h]
+ruido = True                            # Ruido en el caudal de entrada
+area = 2                                # Area transversal del tanque [m^2]
+nivel_inicial = 0                       # Nivel inicial del tanque [m]
+t_inicial = 0                           # Tiempo inciial de la simulacion [h]
+t_final = longitud                      # Tiempo final de la simulacion [h]
+conf_lev = 0.95                         # Nivel de confiabilidad
+tiempo = np.arange(t_inicial,t_final,paso)              # Vector de rangos de tiempo de la simulacion
+tss_2 = int(np.round(4*area*r_inicial,decimal)/paso)    # Tiempo de establecimiento del nivel
+t_i_falla = 60.0
+t_f_falla_var = 360.0
+window_size = [1, 5, 10, 50, 100, 200, 400, 'auto']
+t_f_falla_var = [60.3, 63, 90, 135, 210, 285]
+std = [1, 2, 5]
+
+r = np.ones(longitud/paso)*r_inicial
+true_positives = np.zeros([len(t_f_falla_var), len(window_size)])
+false_positives = np.zeros([len(t_f_falla_var), len(window_size)])
+Q = caudal(set_point=q_set,longitud=longitud,paso=paso,factor_ruido=0.01,ruido=True)
+frac_injected=0
+for i in std:
+    frac_injected_y = np.array([])
+    for j,jj in zip(t_f_falla_var,range(0,len(t_f_falla_var))):
+        print(j)
+        nivel = simultank(area=area,nivel_inicial=nivel_inicial,resist_hidraulica=r,caudal_entrada=Q,
+                          tiempo_inicial=0,tiempo_final=longitud,paso=paso,analitic_sol=False)
+        cont = 0
+        fign = plt.figure(figsize=(10,6))
+        for k,kk in zip(window_size,range(0,len(window_size))):
+            print(k)
+            nivel_falla, frac_injected, y_test = f.fault_generator(nivel). \
+                variance(start=t_i_falla,stop=j,step=paso,stand_dev=i, random_seed=0)
+            vector_detected, y_pred, nro_fallas, N_auto = f.fault_detector(
+                nivel_falla[tss_2:]).t_test(stand_dev=1, conf_lev=conf_lev,
+                                            delta_mean=nivel_falla[tss_2:t_i_falla/paso].mean()*0.01, N=k)
+            windows_size_x_labels = [1, 5, 10, 50, 100, 200, 400, '{}'.format(N_auto)]
+            tn, fp, fn, tp = confusion_matrix(y_true=y_test[tss_2:], y_pred=y_pred).ravel()
+            true_positives[jj, kk] = tp/(tp+fn)
+            false_positives[jj, kk] = fp/(fp+tp)
+
+            tiempo_falla = tiempo[tss_2:][y_pred == 1]
+
+            ax = fign.add_subplot(2,4,kk+1)
+            ax.plot(tiempo,nivel_falla,label='Tank level')
+            ax.scatter(tiempo_falla,vector_detected,c='r',marker='o',alpha=0.2,label='Fault Detected')
+            plt.title('N = {}'.format(N_auto))
+            plt.xlabel('Time (h)')
+            plt.ylabel('Tank Level (m)')
+            plt.legend(loc=4)
+            if kk > 0 and kk != 4:
+                plt.gca().axes.yaxis.set_ticklabels([])
+                ax.set_ylabel('')
+            if kk < 4:
+                plt.gca().axes.xaxis.set_ticklabels([])
+                ax.set_xlabel('')
+        fign.tight_layout()
+        fign.subplots_adjust(top=0.85)
+        fign.suptitle('Increased Normally Distributed Variance in Sensor Readings for Tank Level\nStandard Deviation = '
+                      '{:.2f}, Faulty Samples Fraction = {:.3f} and Window Size N'.format(i,frac_injected), size=14)
+        frac_injected_y = np.append(frac_injected_y,[frac_injected])
+        fign.savefig('C:/Users/User/Documents/Python/Tesis/Resultados/t-test/{}-{}.png'.format(i,jj))
+    frac_injected_y_label = ['{:.3f}'.format(frac) for frac in frac_injected_y]
+
+    fig, (ax1,ax2,ax_cbar) = plt.subplots(1, 3, gridspec_kw={'width_ratios': [1, 1, 0.08]}, figsize=(12,5))
+    ax1.get_shared_y_axes().join(ax2)
+    g1 = sbn.heatmap(true_positives, annot=True, xticklabels=windows_size_x_labels,
+                     yticklabels=frac_injected_y_label, ax=ax1, vmin=0, vmax=1, cbar=False)
+    g2 = sbn.heatmap(false_positives, annot=True, xticklabels=windows_size_x_labels,
+                     yticklabels=frac_injected_y_label, ax=ax2, vmin=0, vmax=1, cbar_ax=ax_cbar)
+    ax1.set_title('FDR')
+    ax1.set_ylabel('Fault Density')
+    ax1.set_xlabel('Window Size')
+    ax2.set_title('FAR')
+    ax2.set_xlabel('Window Size')
+    ax1.set_yticklabels(ax1.get_yticklabels(), rotation=0)
+    ax2.axes.get_yaxis().set_visible(False)
+    plt.tight_layout()
+    fig.subplots_adjust(top=0.83)
+    fig.suptitle('Fault Detection Indexes in Tank Level Simulation by Mean Change Detection\nt-test (95% '
+                 'Conf-Lev) in Increased Normally Distributed Variance on Sensor Readings (std = {:.2f})'.format(i),
+                 size=15)
+    fig.savefig('C:/Users/User/Documents/Python/Tesis/Resultados/t-test/{}.png'.format(i))
 plt.show()
 
 '''
