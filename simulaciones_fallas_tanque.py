@@ -268,9 +268,10 @@ for i in pulse_intensity:
                 ax.set_xlabel('')
         fign.tight_layout()
         fign.subplots_adjust(top=0.85)
-        fign.suptitle('Normaly Distributed Pulsed Sensor Readings for Tank Level\nStandard Deviation = {:.2f}, Fault '
+        fign.suptitle('Normally Distributed Pulsed Sensor Readings for Tank Level\nStandard Deviation = {:.2f}, Fault '
                       'Density = {:.3f} and Window Size N'.format(i,frac_injected), size=14)
         frac_injected_y = np.append(frac_injected_y,[frac_injected])
+        #fign.savefig('C:/Users/User/Documents/Python/Tesis/Resultados/t-test/{}-{}.png'.format(i,jj),dpi=1000)
     frac_injected_y_label = ['{:.3f}'.format(frac) for frac in frac_injected_y]
 
     fig, (ax1,ax2,ax_cbar) = plt.subplots(1, 3, gridspec_kw={'width_ratios': [1, 1, 0.08]}, figsize=(12,5))
@@ -288,8 +289,9 @@ for i in pulse_intensity:
     ax2.axes.get_yaxis().set_visible(False)
     plt.tight_layout()
     fig.subplots_adjust(top=0.83)
-    fig.suptitle('Fault Detection in Tank Level Simulation\nMoving Window t-test (95% conf-lev) on faulty pulsed '
-                 'sensor readings', size=16)
+    fig.suptitle('Fault Detection Indexes in Tank Level Simulation by Mean Change Detection\nt-test (95% '
+                 'Conf-Lev) on Normally Distributed Pulsed Sensor Readings (std = {i})', size=15)
+    #fig.savefig('C:/Users/User/Documents/Python/Tesis/Resultados/t-test/{}.png'.format(i),dpi=1000)
 
 plt.show()
 
