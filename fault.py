@@ -83,7 +83,7 @@ class fault_generator(object):
         import numpy as np
 
         vector_faulty = np.copy(self.Vector_non_faulty)
-        vector_faulty[start/step:stop/step] += np.linspace(0, change, (stop-start)/step)
+        vector_faulty[start/step:(stop+step)/step] += np.linspace(0, change, (stop-start)/step)
         vector_faulty[stop/step:] += change
         slope = change*step/(stop-start)
         drifted_positions_bool = vector_faulty - self.Vector_non_faulty
@@ -91,12 +91,13 @@ class fault_generator(object):
 
         return vector_faulty, slope, drifted_positions_bool
 
-    def variance(self, start, stop, step, stand_dev):
+    def variance(self, start, stop, step, stand_dev, random_seed=0):
 
         import numpy as np
 
+        np.random.seed(random_seed)
         vector_faulty = np.copy(self.Vector_non_faulty)
-        vector_faulty[start:stop] += np.random.normal(0, stand_dev, int((stop-start)/step))
+        vector_faulty[start/step:stop/step] += np.random.normal(0, stand_dev, int((stop-start)/step))
         faulty_fraction = (stop-start)/(step*len(vector_faulty))
         varianced_positions_bool = vector_faulty - self.Vector_non_faulty
         varianced_positions_bool = varianced_positions_bool != 0
