@@ -222,7 +222,7 @@ t_i_falla = 60
 t_f_falla_pulse = 360
 window_size = [1, 5, 10, 50, 100, 200, 400, 'auto']
 N_faults = [3, 30, 300, 750, 1500, 2250]
-pulse_intensity = [1, 2, 5, 10]
+pulse_intensity = [1, 2, 5]
 
 r = np.ones(longitud/paso)*r_inicial
 true_positives = np.zeros([len(N_faults), len(window_size)])
@@ -236,6 +236,8 @@ for i in pulse_intensity:
         print(j)
         nivel = simultank(area=area,nivel_inicial=nivel_inicial,resist_hidraulica=r,caudal_entrada=Q,
                           tiempo_inicial=0,tiempo_final=longitud,paso=paso,analitic_sol=False)
+        cont = 0
+        fign = plt.figure(figsize=(10,6))
         for k,kk in zip(window_size,range(0,len(window_size))):
             print(k)
             nivel_falla, frac_injected, y_test = f.fault_generator(nivel).\
@@ -248,17 +250,26 @@ for i in pulse_intensity:
             tn, fp, fn, tp = confusion_matrix(y_true=y_test[tss_2:], y_pred=y_pred).ravel()
             true_positives[jj, kk] = tp/(tp+fn)
             false_positives[jj, kk] = fp/(fp+tp)
-            if i == pulse_intensity[1] and k == window_size[-1]:
-                plt.figure()
-                plt.plot(tiempo,nivel_falla,label='Tank level')
-                tiempo_falla = tiempo[tss_2:][y_pred == 1]
-                plt.scatter(tiempo_falla,vector_detected,c='r',marker='o',alpha=0.2,label='Fault Detected')
-                plt.title('Faults detected for tank level simulation\nwith fault density = {:.3f} and window size = {},'
-                          '\nwith pulse in sensor reading with standard deviation = {:.2f}'.
-                          format(frac_injected,N_auto,i))
-                plt.xlabel('Time (h)')
-                plt.ylabel('Tank Level (m)')
-                plt.legend()
+
+            tiempo_falla = tiempo[tss_2:][y_pred == 1]
+
+            ax = fign.add_subplot(2,4,kk+1)
+            ax.plot(tiempo,nivel_falla,label='Tank level')
+            ax.scatter(tiempo_falla,vector_detected,c='r',marker='o',alpha=0.2,label='Fault Detected')
+            plt.title('N = {}'.format(k))
+            plt.xlabel('Time (h)')
+            plt.ylabel('Tank Level (m)')
+            plt.legend(loc=4)
+            if kk > 0 and kk != 4:
+                plt.gca().axes.yaxis.set_ticklabels([])
+                ax.set_ylabel('')
+            if kk < 4:
+                plt.gca().axes.xaxis.set_ticklabels([])
+                ax.set_xlabel('')
+        fign.tight_layout()
+        fign.subplots_adjust(top=0.85)
+        fign.suptitle('Normaly Distributed Pulsed Sensor Readings for Tank Level\nStandard Deviation = {:.2f}, Fault '
+                      'Density = {:.3f} and Window Size N'.format(i,frac_injected), size=14)
         frac_injected_y = np.append(frac_injected_y,[frac_injected])
     frac_injected_y_label = ['{:.3f}'.format(frac) for frac in frac_injected_y]
 
@@ -280,26 +291,6 @@ for i in pulse_intensity:
     fig.suptitle('Fault Detection in Tank Level Simulation\nMoving Window t-test (95% conf-lev) on faulty pulsed '
                  'sensor readings', size=16)
 
-
-'''
-gs = gridspec.GridSpec(1, 2)
-ax1 = fig.add_subplot(gs[0])
-ax2 = fig.add_subplot(gs[1], sharey=ax1)
-#ax1.xlabel('Window size')
-#ax1.xlabel('Window size')
-#ax2.xlabel('Window size')
-#ax2.xlabel('Window size')
-sbn.heatmap(true_positives, annot=True, xticklabels=windows_size_x_labels,
-            yticklabels=frac_injected_y_label, ax=ax1, vmin=0, vmax=1)
-plt.setp([ax1, ax2], title=['True Positive Rate (FDR)','False Positive Rate (FAR)'], xlabel='Window Size',
-         ylabel='Fault Density')
-fig.suptitle('Fault Detection in Tank Simulation\nMoving Window t-test (95% conf-lev) on faulty pulsed sensor '
-             'readings', size=12)
-sbn.heatmap(false_positives, annot=True, xticklabels=windows_size_x_labels,
-            yticklabels=frac_injected_y_label, ax=ax2, cbar=False, vmin=0, vmax=1)
-plt.setp(ax2.get_yticklabels(), visible=False)
-plt.setp(ax1.get_yticklabels(), rotation=0)
-'''
 plt.show()
 
 '''
