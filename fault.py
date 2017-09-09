@@ -34,7 +34,7 @@ class fault_detector(object):
 
         return vector_detected, falla_bool, number_of_faults_detected, N
 
-    def f_test(self, delta_var, conf_lev, N ='auto'):
+    def f_test(self, std, delta_var, conf_lev, N ='auto'):
 
         import scipy.stats
         import scipy as sp
@@ -45,19 +45,20 @@ class fault_detector(object):
         falla_bool = np.zeros(len(vector_to_analyze))
         if np.std(vector_to_analyze) > 0.0001:
             if N == 'auto':
-                N = 1
-                X_2_table = sp.stats.chi2.ppf(q=conf_lev,df=N)
-                X_2 = ((vector_to_analyze.std()+delta_var)/np.std(vector_to_analyze))**2
-
+                N = 2
+                X_2_table = sp.stats.chi2.ppf(q=conf_lev,df=N-1)
+                print('X_2_table = {}'.format(X_2_table))
+                X_2 = ((std+delta_var)/std)**2
+                print('X_2 = {}'.format(X_2))
                 while X_2 < X_2_table:
                     N += 1
-                    X_2_table = sp.stats.chi2.ppf(q=conf_lev,df=N)
-                    X_2 = (N - 1)*(((vector_to_analyze.std()+delta_var)/np.std(vector_to_analyze))**2)
+                    X_2_table = sp.stats.chi2.ppf(q=conf_lev,df=N-1)
+                    X_2 = (N - 1)*(((std+delta_var)/std)**2)
                     if N > len(vector_to_analyze)/2:
                         print('No se cuenta con suficientes valores para detectar un '
                               'cambio en la varianza de {}, pruebe indicando el valor de N'.format(delta_var))
                         break
-
+                print('N = {}'.format(N))
             cont = 0
             while N+cont <= len(vector_to_analyze) - N:
                 dfn = len(vector_to_analyze[:N+cont])
@@ -83,9 +84,9 @@ class fault_generator(object):
         import numpy as np
 
         vector_faulty = np.copy(self.Vector_non_faulty)
-        vector_faulty[start/step:(stop+step)/step] += np.linspace(0, change, (stop-start)/step)
+        vector_faulty[start/step:stop/step] += np.linspace(0, change, (stop-start)/step)
         vector_faulty[stop/step:] += change
-        slope = change*step/(stop-start)
+        slope = change/(stop-start)
         drifted_positions_bool = vector_faulty - self.Vector_non_faulty
         drifted_positions_bool = drifted_positions_bool != 0
 
