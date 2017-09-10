@@ -114,6 +114,7 @@ class fault_generator(object):
         after_fault = vector_faulty[start/step:stop/step]
         position_after_fault = np.asarray(list(enumerate(after_fault,start=int(start/step))))
 
+        random.seed(random_seed)
         rand_sample_after_fault = position_after_fault[random.sample(range(0, len(position_after_fault)), N), :]
 
         if mode == 'random':
