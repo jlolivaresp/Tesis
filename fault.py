@@ -47,9 +47,7 @@ class fault_detector(object):
             if N == 'auto':
                 N = 2
                 X_2_table = sp.stats.chi2.ppf(q=conf_lev,df=N-1)
-                print('X_2_table = {}'.format(X_2_table))
                 X_2 = ((std+delta_var)/std)**2
-                print('X_2 = {}'.format(X_2))
                 while X_2 < X_2_table:
                     N += 1
                     X_2_table = sp.stats.chi2.ppf(q=conf_lev,df=N-1)
@@ -58,7 +56,6 @@ class fault_detector(object):
                         print('No se cuenta con suficientes valores para detectar un '
                               'cambio en la varianza de {}, pruebe indicando el valor de N'.format(delta_var))
                         break
-                print('N = {}'.format(N))
             cont = 0
             while N+cont <= len(vector_to_analyze) - N:
                 dfn = len(vector_to_analyze[:N+cont])
