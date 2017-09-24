@@ -15,7 +15,7 @@ import matplotlib as mpl
 # # Deteccion de fallas t-test
 
 # Drift: Resistencia hidraulica - Variacion de la pendiente del drift y del tamano de la ventana de prueba
-'''
+
 r_inicial = 0.28                        # Valor inicial de la resistencia hidraulica
 delta_r = [0.01, 0.04, 0.12]            # Valor final de la resistencia hidraulica (Intensidad del drift)
 longitud = 4000                         # Tiempo de simulacion [h] (5 meses y medio)
@@ -42,6 +42,9 @@ fdr_far_ttest = np.zeros([2,3])
 avg_tp_ttest_drift = np.array([])
 avg_fp_ttest_drift = np.array([])
 
+fdr_far_ttest_tp = np.zeros([3,6])
+fdr_far_ttest_fp = np.zeros([3,6])
+
 for i in delta_r:
     print(i)
     for k,kk in zip(delta_media,range(0,len(delta_media))):
@@ -63,6 +66,8 @@ for i in delta_r:
 
     avg_tp_ttest_drift = np.append(avg_tp_ttest_drift, np.average(true_positives_ttest_drift))
     avg_fp_ttest_drift = np.append(avg_fp_ttest_drift, np.average(false_positives_ttest_drift))
+    fdr_far_ttest_tp += true_positives_ttest_drift
+    fdr_far_ttest_fp += false_positives_ttest_drift
 avg_tp_ttest_drift = np.average(avg_tp_ttest_drift)
 avg_fp_ttest_drift = np.average(avg_fp_ttest_drift)
 fdr_far_ttest[0,0] = avg_tp_ttest_drift
@@ -119,6 +124,8 @@ for i in pulse_intensity:
             tiempo_falla = tiempo[tss_2:][y_pred == 1]
     avg_tp_ttest_pulse = np.append(avg_tp_ttest_pulse, np.average(true_positives_ttest_pulse))
     avg_fp_ttest_pulse = np.append(avg_fp_ttest_pulse, np.average(false_positives_ttest_pulse))
+    fdr_far_ttest_tp += true_positives_ttest_pulse
+    fdr_far_ttest_fp += false_positives_ttest_pulse
 avg_tp_ttest_pulse = np.average(avg_tp_ttest_pulse)
 avg_fp_ttest_pulse = np.average(avg_fp_ttest_pulse)
 fdr_far_ttest[0,1] = avg_tp_ttest_pulse
@@ -174,12 +181,15 @@ for i,ii in zip(std, var):
             tiempo_falla = tiempo[tss_2:][y_pred == 1]
     avg_tp_ttest_var = np.append(avg_tp_ttest_var, np.average(true_positives_ttest_var))
     avg_fp_ttest_var = np.append(avg_fp_ttest_var, np.average(false_positives_ttest_var))
+    fdr_far_ttest_tp += true_positives_ttest_var
+    fdr_far_ttest_fp += false_positives_ttest_var
 avg_tp_ttest_var = np.average(avg_tp_ttest_var)
 avg_fp_ttest_var = np.average(avg_fp_ttest_var)
 fdr_far_ttest[0,2] = avg_tp_ttest_var
 fdr_far_ttest[1,2] = avg_fp_ttest_var
 
 print(fdr_far_ttest)
+
 # # Deteccion de fallas F-test
 
 # Drift: Resistencia hidraulica - Variacion de la pendiente del drift y del tamano de la ventana de prueba
@@ -210,6 +220,9 @@ fdr_far_ftest = np.zeros([2,3])
 avg_tp_ftest_drift = np.array([])
 avg_fp_ftest_drift = np.array([])
 
+fdr_far_ftest_tp = np.zeros([3,6])
+fdr_far_ftest_fp = np.zeros([3,6])
+
 for i in delta_r:
     print(i)
     for k,kk in zip(delta_var,range(0,len(delta_var))):
@@ -229,6 +242,8 @@ for i in delta_r:
             tiempo_falla = tiempo[tss_2:][y_pred == 1]
     avg_tp_ftest_drift = np.append(avg_tp_ftest_drift, np.average(true_positives_ftest_drift))
     avg_fp_ftest_drift = np.append(avg_fp_ftest_drift, np.average(false_positives_ftest_drift))
+    fdr_far_ftest_tp += true_positives_ftest_drift
+    fdr_far_ftest_fp += false_positives_ftest_drift
 avg_tp_ftest_drift = np.average(avg_tp_ftest_drift)
 avg_fp_ftest_drift = np.average(avg_fp_ftest_drift)
 fdr_far_ftest[0,0] = avg_tp_ftest_drift
@@ -284,11 +299,13 @@ for i in pulse_intensity:
             tiempo_falla = tiempo[tss_2:][y_pred == 1]
     avg_tp_ftest_pulse = np.append(avg_tp_ftest_pulse, np.average(true_positives_ftest_pulse))
     avg_fp_ftest_pulse = np.append(avg_fp_ftest_pulse, np.average(false_positives_ftest_pulse))
+    fdr_far_ftest_tp += true_positives_ftest_pulse
+    fdr_far_ftest_fp += false_positives_ftest_pulse
 avg_tp_ftest_pulse = np.average(avg_tp_ftest_pulse)
 avg_fp_ftest_pulse = np.average(avg_fp_ftest_pulse)
 fdr_far_ftest[0,1] = avg_tp_ftest_pulse
 fdr_far_ftest[1,1] = avg_fp_ftest_pulse
-'''
+
 # Variance
 
 r_inicial = 0.28                        # Valor inicial de la resistencia hidraulica
@@ -338,8 +355,21 @@ for i,ii in zip(std, var):
             tiempo_falla = tiempo[tss_2:][y_pred == 1]
     avg_tp_ftest_var = np.append(avg_tp_ftest_var, np.average(true_positives_ftest_var))
     avg_fp_ftest_var = np.append(avg_fp_ftest_var, np.average(false_positives_ftest_var))
+    fdr_far_ftest_tp += true_positives_ftest_var
+    fdr_far_ftest_fp += false_positives_ftest_var
 avg_tp_ftest_var = np.average(avg_tp_ftest_var)
 avg_fp_ftest_var = np.average(avg_fp_ftest_var)
 fdr_far_ftest[0,2] = avg_tp_ftest_var
 fdr_far_ftest[1,2] = avg_fp_ftest_var
+
 print(fdr_far_ftest)
+
+avg_fdr_ttest = np.array([np.average(i) for i in fdr_far_ttest_tp])
+avg_far_ttest = np.array([np.average(i) for i in fdr_far_ttest_fp])
+avg_fdr_ftest = np.array([np.average(i) for i in fdr_far_ftest_tp])
+avg_far_ftest = np.array([np.average(i) for i in fdr_far_ftest_fp])
+
+print(avg_fdr_ttest/9)
+print(avg_far_ttest/9)
+print(avg_fdr_ftest/9)
+print(avg_far_ftest/9)

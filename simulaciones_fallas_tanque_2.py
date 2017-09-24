@@ -294,7 +294,7 @@ for i,ii in zip(std, var):
 # # Deteccion de fallas F-test
 
 # Drift: Resistencia hidraulica - Variacion de la pendiente del drift y del tamano de la ventana de prueba
-'''
+
 r_inicial = 0.28                        # Valor inicial de la resistencia hidraulica
 delta_r = [0.01, 0.04, 0.12]            # Valor final de la resistencia hidraulica (Intensidad del drift)
 longitud = 4000                         # Tiempo de simulacion [h] (5 meses y medio)
@@ -467,9 +467,9 @@ for i in pulse_intensity:
     ax2.axes.get_yaxis().set_visible(False)
     plt.tight_layout()
     fig.subplots_adjust(top=0.80)
-    fig.suptitle('Índices de Detección de Falla en Simulación del Nivel del Tanque por Detección de Cambios en la Media'
-                 '\nF-test (95% Confiabilidad) en Mediciones del Sensor de Nivel con Pulsos de Amplitud Normalmente '
-                 'Distribuida (std = {:.2f})'.format(i), size=13)
+    fig.suptitle('Índices de Detección de Falla en Simulación del Nivel del Tanque por Detección de Cambios en la '
+                 'Varianza\nF-test (95% Confiabilidad) en Mediciones del Sensor de Nivel con Pulsos de Amplitud '
+                 'Normalmente Distribuida (std = {:.2f})'.format(i), size=13)
     fig.savefig('C:/Users/User/Documents/Python/Tesis/Resultados_2/F-test/Pulse_4/{}.png'.format(i))
 
 
@@ -558,9 +558,9 @@ for i,ii in zip(std, var):
     ax2.axes.get_yaxis().set_visible(False)
     plt.tight_layout()
     fig.subplots_adjust(top=0.80)
-    fig.suptitle('Índices de Detección de Falla en Simulación del Nivel del Tanque por Detección de Cambios en la Media'
-                 '\nF-test (95% Confiabilidad) en Mediciones del Sensor de Nivel con Incremento de Varianza '
-                 '= {:.2f}'.format(ii),size=13)
+    fig.suptitle('Índices de Detección de Falla en Simulación del Nivel del Tanque por Detección de Cambios en la '
+                 'Varianza\nF-test (95% Confiabilidad) en Mediciones del Sensor de Nivel con Incremento de Varianza = '
+                 '{:.2f}'.format(ii),size=13)
     fig.savefig('C:/Users/User/Documents/Python/Tesis/Resultados_2/F-test/Variance_4/{}.png'.format(i))
 #plt.show()
-'''
+
