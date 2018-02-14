@@ -29,8 +29,8 @@ r_sim = np.ones(tiempo/paso)*r                          # Vector de resistencia 
 
 '''Diferencias a detectar'''
 
-detect_delta_media = np.arange(0.0005, 0.0205, 0.0005)
-detect_delta_var = np.arange(0.0005, 0.0205, 0.0005)
+detect_delta_media = np.linspace(1e-3, 1e-2, 20)
+detect_delta_var = np.linspace(2e-7, 2.3e-5, 20)
 
 '''Falla de Deriva'''
 

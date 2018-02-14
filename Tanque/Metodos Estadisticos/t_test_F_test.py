@@ -70,7 +70,7 @@ for j in datos_tanque.detect_delta_var:
         intensidad_falla = np.append(intensidad_falla, group[1].intensidad_falla.unique()[0])
         tipo_falla = np.append(tipo_falla, group[1].tipo_falla.unique()[0])
         N_vector_ftest = np.append(N_vector_ftest, N)
-
+        print(N)
 FDR_Ftest = tp_mat/(tp_mat+fn_mat)
 FAR_Ftest = fp_mat/(fp_mat+tn_mat)
 

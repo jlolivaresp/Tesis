@@ -1,16 +1,9 @@
 from simultank_F1_variable import simultank
-from aumento_gradual_r import aumento_gradual_r
 from vector_caudal import caudal
 import matplotlib.pyplot as plt
-from matplotlib import gridspec
 import numpy as np
-from timeit import default_timer as timer
-from math import exp
 import fault as f
 from sklearn.metrics import confusion_matrix
-import seaborn as sbn
-import matplotlib.ticker as mtick
-import matplotlib as mpl
 
 # # Deteccion de fallas t-test
 
@@ -42,8 +35,8 @@ fdr_far_ttest = np.zeros([2,3])
 avg_tp_ttest_drift = np.array([])
 avg_fp_ttest_drift = np.array([])
 
-fdr_far_ttest_tp = np.zeros([3,6])
-fdr_far_ttest_fp = np.zeros([3,6])
+fdr_ttest = np.zeros([3,6])
+far_ttest = np.zeros([3,6])
 
 for i in delta_r:
     print(i)
@@ -66,12 +59,13 @@ for i in delta_r:
 
     avg_tp_ttest_drift = np.append(avg_tp_ttest_drift, np.average(true_positives_ttest_drift))
     avg_fp_ttest_drift = np.append(avg_fp_ttest_drift, np.average(false_positives_ttest_drift))
-    fdr_far_ttest_tp += true_positives_ttest_drift
-    fdr_far_ttest_fp += false_positives_ttest_drift
+    fdr_ttest += true_positives_ttest_drift
+    far_ttest += false_positives_ttest_drift
 avg_tp_ttest_drift = np.average(avg_tp_ttest_drift)
 avg_fp_ttest_drift = np.average(avg_fp_ttest_drift)
 fdr_far_ttest[0,0] = avg_tp_ttest_drift
 fdr_far_ttest[1,0] = avg_fp_ttest_drift
+
 
 # pulse: lecturas del sensor variando la densidad de pulsasiones
 
@@ -124,8 +118,8 @@ for i in pulse_intensity:
             tiempo_falla = tiempo[tss_2:][y_pred == 1]
     avg_tp_ttest_pulse = np.append(avg_tp_ttest_pulse, np.average(true_positives_ttest_pulse))
     avg_fp_ttest_pulse = np.append(avg_fp_ttest_pulse, np.average(false_positives_ttest_pulse))
-    fdr_far_ttest_tp += true_positives_ttest_pulse
-    fdr_far_ttest_fp += false_positives_ttest_pulse
+    fdr_ttest += true_positives_ttest_pulse
+    far_ttest += false_positives_ttest_pulse
 avg_tp_ttest_pulse = np.average(avg_tp_ttest_pulse)
 avg_fp_ttest_pulse = np.average(avg_fp_ttest_pulse)
 fdr_far_ttest[0,1] = avg_tp_ttest_pulse
@@ -181,8 +175,8 @@ for i,ii in zip(std, var):
             tiempo_falla = tiempo[tss_2:][y_pred == 1]
     avg_tp_ttest_var = np.append(avg_tp_ttest_var, np.average(true_positives_ttest_var))
     avg_fp_ttest_var = np.append(avg_fp_ttest_var, np.average(false_positives_ttest_var))
-    fdr_far_ttest_tp += true_positives_ttest_var
-    fdr_far_ttest_fp += false_positives_ttest_var
+    fdr_ttest += true_positives_ttest_var
+    far_ttest += false_positives_ttest_var
 avg_tp_ttest_var = np.average(avg_tp_ttest_var)
 avg_fp_ttest_var = np.average(avg_fp_ttest_var)
 fdr_far_ttest[0,2] = avg_tp_ttest_var
@@ -220,8 +214,8 @@ fdr_far_ftest = np.zeros([2,3])
 avg_tp_ftest_drift = np.array([])
 avg_fp_ftest_drift = np.array([])
 
-fdr_far_ftest_tp = np.zeros([3,6])
-fdr_far_ftest_fp = np.zeros([3,6])
+fdr_ftest = np.zeros([3,6])
+far_ftest = np.zeros([3,6])
 
 for i in delta_r:
     print(i)
@@ -242,8 +236,8 @@ for i in delta_r:
             tiempo_falla = tiempo[tss_2:][y_pred == 1]
     avg_tp_ftest_drift = np.append(avg_tp_ftest_drift, np.average(true_positives_ftest_drift))
     avg_fp_ftest_drift = np.append(avg_fp_ftest_drift, np.average(false_positives_ftest_drift))
-    fdr_far_ftest_tp += true_positives_ftest_drift
-    fdr_far_ftest_fp += false_positives_ftest_drift
+    fdr_ftest += true_positives_ftest_drift
+    far_ftest += false_positives_ftest_drift
 avg_tp_ftest_drift = np.average(avg_tp_ftest_drift)
 avg_fp_ftest_drift = np.average(avg_fp_ftest_drift)
 fdr_far_ftest[0,0] = avg_tp_ftest_drift
@@ -299,8 +293,8 @@ for i in pulse_intensity:
             tiempo_falla = tiempo[tss_2:][y_pred == 1]
     avg_tp_ftest_pulse = np.append(avg_tp_ftest_pulse, np.average(true_positives_ftest_pulse))
     avg_fp_ftest_pulse = np.append(avg_fp_ftest_pulse, np.average(false_positives_ftest_pulse))
-    fdr_far_ftest_tp += true_positives_ftest_pulse
-    fdr_far_ftest_fp += false_positives_ftest_pulse
+    fdr_ftest += true_positives_ftest_pulse
+    far_ftest += false_positives_ftest_pulse
 avg_tp_ftest_pulse = np.average(avg_tp_ftest_pulse)
 avg_fp_ftest_pulse = np.average(avg_fp_ftest_pulse)
 fdr_far_ftest[0,1] = avg_tp_ftest_pulse
@@ -355,19 +349,17 @@ for i,ii in zip(std, var):
             tiempo_falla = tiempo[tss_2:][y_pred == 1]
     avg_tp_ftest_var = np.append(avg_tp_ftest_var, np.average(true_positives_ftest_var))
     avg_fp_ftest_var = np.append(avg_fp_ftest_var, np.average(false_positives_ftest_var))
-    fdr_far_ftest_tp += true_positives_ftest_var
-    fdr_far_ftest_fp += false_positives_ftest_var
+    fdr_ftest += true_positives_ftest_var
+    far_ftest += false_positives_ftest_var
 avg_tp_ftest_var = np.average(avg_tp_ftest_var)
 avg_fp_ftest_var = np.average(avg_fp_ftest_var)
 fdr_far_ftest[0,2] = avg_tp_ftest_var
 fdr_far_ftest[1,2] = avg_fp_ftest_var
 
-print(fdr_far_ftest)
-
-avg_fdr_ttest = np.array([np.average(i) for i in fdr_far_ttest_tp])
-avg_far_ttest = np.array([np.average(i) for i in fdr_far_ttest_fp])
-avg_fdr_ftest = np.array([np.average(i) for i in fdr_far_ftest_tp])
-avg_far_ftest = np.array([np.average(i) for i in fdr_far_ftest_fp])
+avg_fdr_ttest = np.average(fdr_ttest,0)
+avg_far_ttest = np.average(far_ttest,0)
+avg_fdr_ftest = np.average(fdr_ftest,0)
+avg_far_ftest = np.average(far_ftest,0)
 
 print(avg_fdr_ttest/9)
 print(avg_far_ttest/9)

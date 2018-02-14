@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import random
 
 # Primera grafica
-
+'''
 a = [0.59, 0.23, 0.00]
 b = [0.03, 0.17, 0.00]
 c = [0.04, 0.95, 1.00]
@@ -111,7 +111,7 @@ legends = ax[1].legend(frameon=False, loc='lower right')
 for l in legends.get_texts():
     l.set_alpha(0.8)
 
-
+'''
 '''
 ax[0].scatter(delta_media, fdr_ttest_drift, color='b', alpha=0.8)
 ax[0].scatter(delta_media, fdr_ttest_pulse, color='b', alpha=0.5)
@@ -127,7 +127,7 @@ ax[1].scatter(delta_var, far_ftest_drift, color='r', alpha=0.8)
 ax[1].scatter(delta_var, far_ftest_pulse, color='r', alpha=0.5)
 ax[1].scatter(delta_var, far_ftest_var, color='r', alpha=0.2)
 '''
-
+'''
 N_ttest = ['852', '213', '95']
 N_ftest = ['134', '34', '16']
 
@@ -171,3 +171,55 @@ fig.suptitle(r'Promedios de FDR y FAR por Método y $\Delta\mu$ y $\Delta\sigma^
              fontweight='bold',alpha=0.7)
 
 plt.show()
+'''
+# Tercera Grafica
+
+fdr_ttest = [0.137918519, 0.187592593, 0.235444444, 0.324148148, 0.360814815, 0.387037037]
+far_ttest = [0.051148148, 0.012481481, 0.021333333, 0.075814815, 0.118888889, 0.12]
+fdr_ftest = [0.642891111, 0.612559259, 0.6577, 0.672777778, 0.686259259, 0.692925926]
+far_ftest = [0.447037037, 0.423185185, 0.512740741, 0.526666667, 0.525074074, 0.52]
+
+pos = np.arange(1, 7, 1)
+width = 0.25
+fig_1, ax_1 = plt.subplots(nrows=1, sharex=True)
+
+ax_1 = plt.bar(pos, fdr_ttest, width, color='#86ff68', alpha=1, label='FDR: t-test')
+ax_1 = plt.bar(pos, np.negative(far_ttest), width, color='#e168ff', alpha=1, label='FAR: t-test')
+ax_1 = plt.bar(pos + width, fdr_ftest, width, color='#4bcfc2', alpha=1, label='FDR: F-test')
+ax_1 = plt.bar(pos + width, np.negative(far_ftest), width, color='#ff6886', alpha=1, label='FAR: F-test')
+
+axes = plt.gca()
+
+for i, v in enumerate(fdr_ttest[::1]):
+    axes.text(i + 0.88, v + 0.02, '{:.2f}'.format(v), color='#86ff68', fontweight='bold', fontsize=6)
+for i, v in enumerate(far_ttest[::1]):
+    axes.text(i + 0.88, -v - 0.045, '{:.2f}'.format(v), color='#e168ff', fontweight='bold', fontsize=6)
+for i, v in enumerate(fdr_ftest[::1]):
+    axes.text(i + 0.88 + width, v + 0.02, '{:.2f}'.format(v), color='#4bcfc2', fontweight='bold', fontsize=6)
+for i, v in enumerate(far_ftest[::1]):
+    axes.text(i + 0.88 + width, -v - 0.045, '{:.2f}'.format(v), color='#ff6886', fontweight='bold', fontsize=6)
+
+axes.set_ylim([-0.9, 0.75])
+
+
+axes.spines["top"].set_visible(False)
+axes.spines["bottom"].set_visible(False)
+axes.spines["right"].set_visible(False)
+axes.spines["left"].set_visible(False)
+axes.tick_params(axis='both', left='off', top='off', bottom='off')
+axes.set_yticks([0,0])
+axes.axes.get_yaxis().set_visible(False)
+[i.set_alpha(0.6) for i in axes.get_xticklabels()]
+[i.set_fontsize(8) for i in axes.get_xticklabels()]
+
+axes.set_title('Promedios de FDR y FAR Por Intensidad de Falla\n(Mínima Intensidad = 1 - Máxima Intensidad = 6)',
+               alpha=0.6, fontsize=10)
+axes.set_xlabel('Intensidad', alpha=0.6, fontsize=8)
+
+legends = axes.legend(frameon=False, loc=3)
+for l in legends.get_texts():
+    l.set_fontsize(8)
+    l.set_alpha(0.6)
+
+plt.show()
+

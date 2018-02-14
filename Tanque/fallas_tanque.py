@@ -123,5 +123,3 @@ for amp in datos.amplitud_var:
 
         # Anexamos los datos de falla nuevos al DataFrame general
         df_tanque_falla = df_tanque_falla.append(df_tanque_falla_var, ignore_index=True)
-
-

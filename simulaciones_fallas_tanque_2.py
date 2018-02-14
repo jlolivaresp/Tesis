@@ -15,7 +15,7 @@ import matplotlib as mpl
 # # Deteccion de fallas t-test
 
 # Drift: Resistencia hidraulica - Variacion de la pendiente del drift y del tamano de la ventana de prueba
-'''
+
 r_inicial = 0.28                        # Valor inicial de la resistencia hidraulica
 delta_r = [0.01, 0.04, 0.12]            # Valor final de la resistencia hidraulica (Intensidad del drift)
 longitud = 4000                         # Tiempo de simulacion [h] (5 meses y medio)
@@ -101,7 +101,7 @@ for i in delta_r:
                  '\ncon t-test (95% Confiabilidad) en Deriva de Resistencia Hidráulica de Válvula de Salida de 0.28 a '
                  '{:.2f}'.format(0.28+i), size=13)
     fig.savefig('C:/Users/User/Documents/Python/Tesis/Resultados_2/t-test/Drift/{}.png'.format(i))
-'''
+
 
 # pulse: lecturas del sensor variando la densidad de pulsasiones
 '''
