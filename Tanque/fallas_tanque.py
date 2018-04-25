@@ -23,6 +23,7 @@ nivel = simultank(area=datos.area, nivel_inicial=datos.nivel_inicial, resist_hid
                   caudal_entrada=datos.q_sim, tiempo_inicial=datos.t_i, tiempo_final=datos.t_f,
                   paso=datos.paso, analitic_sol=False) + np.random.normal(0, 0.005, len(datos.t_sim))
 nivel_ee = nivel[int(datos.tss_2/datos.paso):]
+print(datos.detect_delta_var[5]*100/np.var(nivel_ee))
 
 '''____________________________________________ Falla de deriva _____________________________________________________'''
 
@@ -123,3 +124,4 @@ for amp in datos.amplitud_var:
 
         # Anexamos los datos de falla nuevos al DataFrame general
         df_tanque_falla = df_tanque_falla.append(df_tanque_falla_var, ignore_index=True)
+

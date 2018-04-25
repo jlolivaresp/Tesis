@@ -26,9 +26,6 @@ fp_mat = np.array([])
 fn_mat = np.array([])
 delta = np.array([])
 N_vector_ttest = np.array([])
-delta_media = 0.0025
-delta_var = 0.001
-
 
 for j in datos_tanque.detect_delta_media:
     for group in groups:

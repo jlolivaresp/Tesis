@@ -347,12 +347,12 @@ fig.subplots_adjust(wspace=0.05)
 groups = t_test_F_test.FDR_FAR_fallas_tanque.groupby(level=['delta'])
 FDR_FAR_fallas_tanque_por_delta = groups.agg('mean')
 
-ax[0].plot(datos_tanque.detect_delta_media, FDR_FAR_fallas_tanque_por_delta.ttest_FDR, marker='.', color='#108282', label='t-test: FDR')
-ax[0].plot(datos_tanque.detect_delta_media, FDR_FAR_fallas_tanque_por_delta.ttest_FAR, marker='.', color='#ad190f', label='t-test: FAR')
+ax[0].plot(datos_tanque.detect_delta_media*100/2, FDR_FAR_fallas_tanque_por_delta.ttest_FDR, marker='.', color='#108282', label='t-test: FDR')
+ax[0].plot(datos_tanque.detect_delta_media*100/2, FDR_FAR_fallas_tanque_por_delta.ttest_FAR, marker='.', color='#ad190f', label='t-test: FAR')
 ax[0].set_xlabel(r'$\Delta\mu (\%)$', color='k', alpha=0.8)
 
-ax[1].plot(datos_tanque.detect_delta_var, FDR_FAR_fallas_tanque_por_delta.ftest_FDR, marker='.', color='#5becff', label='F-test: FDR')
-ax[1].plot(datos_tanque.detect_delta_var, FDR_FAR_fallas_tanque_por_delta.ftest_FAR, marker='.', color='#ed6145', label='F-test: FAR')
+ax[1].plot(datos_tanque.detect_delta_var*100/np.var(fallas_tanque.nivel_ee), FDR_FAR_fallas_tanque_por_delta.ftest_FDR, marker='.', color='#5becff', label='F-test: FDR')
+ax[1].plot(datos_tanque.detect_delta_var*100/np.var(fallas_tanque.nivel_ee), FDR_FAR_fallas_tanque_por_delta.ftest_FAR, marker='.', color='#ed6145', label='F-test: FAR')
 ax[1].set_xlabel(r'$\Delta\sigma^2 (\%)$', color='k', alpha=0.8)
 
 ax_2.set_xlabel('N', alpha=0.8, fontsize=6.5)
@@ -392,17 +392,17 @@ ax[1].tick_params(axis='both', left='off', top='off', bottom='off')
 ax_2.tick_params(axis='both', top='off')
 ax_3.tick_params(axis='both', top='off')
 
-major_ticks_ttest_x = np.linspace(min(datos_tanque.detect_delta_media), max(datos_tanque.detect_delta_media), 5, endpoint=True)
-major_ticks_ftest_x = np.linspace(min(datos_tanque.detect_delta_var), max(datos_tanque.detect_delta_var), 5, endpoint=True)
+major_ticks_ttest_x = np.linspace(min(datos_tanque.detect_delta_media*100/2), max(datos_tanque.detect_delta_media*100/2), 5, endpoint=True)
+major_ticks_ftest_x = np.linspace(min(datos_tanque.detect_delta_var*100/np.var(fallas_tanque.nivel_ee)), max(datos_tanque.detect_delta_var*100/np.var(fallas_tanque.nivel_ee)), 5, endpoint=True)
 major_ticks_y = np.linspace(0, 1, 5, endpoint=True)
 
-ax[0].set_xticklabels(['{:.2e}'.format(i) for i in major_ticks_ttest_x*100])
-ax[1].set_xticklabels(['{:.2e}'.format(i) for i in major_ticks_ftest_x*100])
+ax[0].set_xticklabels(['{:.2e}'.format(i) for i in major_ticks_ttest_x])
+ax[1].set_xticklabels(['{:.2e}'.format(i) for i in major_ticks_ftest_x])
 
-ax[0].set_xlim([min(datos_tanque.detect_delta_media)-min(datos_tanque.detect_delta_media)/10,
-                max(datos_tanque.detect_delta_media)+min(datos_tanque.detect_delta_media)/10])
-ax[1].set_xlim([min(datos_tanque.detect_delta_var)-min(datos_tanque.detect_delta_var)/2,
-                max(datos_tanque.detect_delta_var)+min(datos_tanque.detect_delta_var)/2])
+ax[0].set_xlim([min(datos_tanque.detect_delta_media*100/2)-min(datos_tanque.detect_delta_media*100/2)/10,
+                max(datos_tanque.detect_delta_media*100/2)+min(datos_tanque.detect_delta_media*100/2)/10])
+ax[1].set_xlim([min(datos_tanque.detect_delta_var*100/np.var(fallas_tanque.nivel_ee))-min(datos_tanque.detect_delta_var*100/np.var(fallas_tanque.nivel_ee))/2,
+                max(datos_tanque.detect_delta_var*100/np.var(fallas_tanque.nivel_ee))+min(datos_tanque.detect_delta_var*100/np.var(fallas_tanque.nivel_ee))/2])
 
 ax[0].xaxis.set_ticks(major_ticks_ttest_x)
 ax[1].xaxis.set_ticks(major_ticks_ftest_x)
