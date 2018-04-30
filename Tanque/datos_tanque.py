@@ -33,7 +33,7 @@ detect_delta_media = np.linspace(1e-3, 1e-2, 20)
 detect_delta_var = np.linspace(2.38e-7, 1.19e-6, 20)
 
 detect_delta_media_residuos = np.linspace(1e-2, 1e-1, 20)
-detect_delta_var_residuos = np.linspace(2e-5, 2.3e-3, 20)
+detect_delta_var_residuos = np.linspace(1.25e-5, 2.3e-3, 20)
 
 '''Falla de Deriva'''
 
