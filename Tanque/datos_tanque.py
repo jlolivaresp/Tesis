@@ -25,6 +25,15 @@ t_sim_ee = t_sim[int(tss_2/paso):]                      # Vector de tiempo de si
 q_sim = np.ones(tiempo/paso)*q                          # Vector de caudal para cada tiempo
 r_sim = np.ones(tiempo/paso)*r                          # Vector de resistencia hidraulica para cada tiempo
 
+'''Datos con tiempo de Simulacion extendido'''
+
+tiempo_extend = 6000                                    # Tiempo de simulacion [h] (240h -> 1d)
+t_f_extend = tiempo_extend                              # Tiempo final de la simulacion [h]
+t_sim_extend = np.arange(t_i, t_f_extend, paso)         # Vector de rangos de tiempo de la simulacion
+t_sim_ee_extend = t_sim_extend[int(tss_2/paso):]        # Vector de tiempo de simulacion en estado estacionario
+q_sim_extend = np.ones(tiempo_extend/paso)*q            # Vector de caudal para cada tiempo
+r_sim_extend = np.ones(tiempo_extend/paso)*r            # Vector de resistencia hidraulica para cada tiempo
+
 """___________________________________________ Variables de las Fallas ______________________________________________"""
 
 '''Diferencias a detectar'''
@@ -56,3 +65,26 @@ modo = 'fixed'                                              # Amplitud de pulsos
 t_i_falla_var = 8                                        # Tiempo de inicio de la falla [h]
 t_f_falla_var = [8.2, 12.1, 16.1, 18]                    # Tiempos de finalizacion de la falla [h]
 amplitud_var = [0.01, 0.025, 0.05]                       # Desviacion estandar
+
+"""____________________________________Variables de las Fallas con Tiempo Extendido _________________________________"""
+
+'''Diferencias a detectar'''
+
+detect_delta_media_residuos_extend = np.linspace(8.69985e-5, 8.69985e-4, 20)
+detect_delta_var_residuos_extend = np.linspace(1.86055e-5, 9.30275e-4, 20)
+
+'''Falla de Deriva'''
+
+t_i_falla_deriva_extend = 600                                        # Tiempo de inicio de la falla [h]
+t_f_falla_deriva_extend = [600.2, 2000.1, 4500.1, 6000]               # Tiempos de finalizacion de la falla [h]
+
+'''Falla de Pulso'''
+
+t_i_falla_pulso_extend = 600                                         # Tiempo de inicio de la falla [h]
+t_f_falla_pulso_extend = 6000                                        # Tiempos de finalizacion de la falla [h]
+N_pulsos_extend = [600, 2000, 3500, 5000]                              # Numero de muestras con pulso
+
+'''Falla de Varianza'''
+
+t_i_falla_var_extend = 600                                        # Tiempo de inicio de la falla [h]
+t_f_falla_var_extend = [1500.2, 2500.1, 4000.1, 5500]              # Tiempos de finalizacion de la falla [h]

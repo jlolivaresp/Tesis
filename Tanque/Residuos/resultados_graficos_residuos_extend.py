@@ -1,4 +1,4 @@
-import t_test_F_test
+import residuos_t_test_F_test_t_sim_grande
 import matplotlib.pyplot as plt
 import numpy as np
 import datos_tanque
@@ -7,10 +7,10 @@ import fallas_tanque
 import fault_2 as f
 import matplotlib.gridspec as gridspec
 
-a = t_test_F_test.FDR_FAR_fallas_tanque.groupby(level=['tipo_falla']).ttest_FDR.apply(lambda x: np.average(x))
-b = t_test_F_test.FDR_FAR_fallas_tanque.groupby(level=['tipo_falla']).ttest_FAR.apply(lambda x: np.average(x))
-c = t_test_F_test.FDR_FAR_fallas_tanque.groupby(level=['tipo_falla']).ftest_FDR.apply(lambda x: np.average(x))
-d = t_test_F_test.FDR_FAR_fallas_tanque.groupby(level=['tipo_falla']).ftest_FAR.apply(lambda x: np.average(x))
+a = residuos_t_test_F_test_t_sim_grande.FDR_FAR_fallas_tanque_residuos.groupby(level=['tipo_falla']).ttest_FDR.apply(lambda x: np.average(x))
+b = residuos_t_test_F_test_t_sim_grande.FDR_FAR_fallas_tanque_residuos.groupby(level=['tipo_falla']).ttest_FAR.apply(lambda x: np.average(x))
+c = residuos_t_test_F_test_t_sim_grande.FDR_FAR_fallas_tanque_residuos.groupby(level=['tipo_falla']).ftest_FDR.apply(lambda x: np.average(x))
+d = residuos_t_test_F_test_t_sim_grande.FDR_FAR_fallas_tanque_residuos.groupby(level=['tipo_falla']).ftest_FAR.apply(lambda x: np.average(x))
 
 
 pos = [2, 1, 0]
@@ -74,17 +74,17 @@ ax[0].tick_params(axis='y', right='off')
 ax[1].tick_params(axis='y', right='off')
 
 fig.subplots_adjust(top=0.83,bottom=0.1)
-fig.suptitle('Promedios de FDR y FAR por Método y Tipo de Falla',size=12, color='k',fontweight='bold',alpha=0.7)
+fig.suptitle('Promedios de FDR y FAR por Método y Tipo de Falla', size=12, color='k',fontweight='bold',alpha=0.7)
 plt.figtext(0.35, 0.05, 'A: Deriva, B: Pulso, C: Varianza', color='k',alpha=0.7)
 
 '''______________________________________________Segunda grafica_____________________________________________________'''
 
-FDR_FAR_fallas_tanque_copy = t_test_F_test.FDR_FAR_fallas_tanque.copy()
+FDR_FAR_fallas_tanque_copy = residuos_t_test_F_test_t_sim_grande.FDR_FAR_fallas_tanque_residuos.copy()
 
 FDR_FAR_fallas_tanque_copy.sort_values(by=['intensidad_falla'], ascending=True, inplace=True)
 
 #numero_intensidad_0 = np.arange(1, 13, 1)
-numero_intensidad = [i for i in range(1, 13)]*len(datos_tanque.detect_delta_media)*3
+numero_intensidad = [i for i in range(1, 13)]*len(datos_tanque.detect_delta_media_residuos_extend)*3
 #numero_intensidad = np.append(numero_intensidad_0, numero_intensidad_0)
 #numero_intensidad = np.append(numero_intensidad, numero_intensidad_0)
 
@@ -149,7 +149,7 @@ for l in legend_FAR.get_texts():
 
 '''__________________________________________________Tercera grafica_________________________________________________'''
 # Grafica de Prueba de deteccion mediante t-test y F-test
-
+'''
 fig = plt.figure(figsize=(7, 6.5))
 
 gs_0 = gridspec.GridSpec(3, 1)
@@ -176,15 +176,15 @@ ax_6 = plt.Subplot(fig, gs_03[-1, :])
 fig.add_subplot(ax_6, sharey=ax_1)
 
 
-ej_deriva_pred = fallas_tanque.df_tanque_falla[(fallas_tanque.df_tanque_falla.tipo_falla == 'deriva')
-                                               & (fallas_tanque.df_tanque_falla.caracteristica_1 == 0.02)
-                                               & (fallas_tanque.df_tanque_falla.caracteristica_2 == 16.1)]
-ej_pulso_pred = fallas_tanque.df_tanque_falla[(fallas_tanque.df_tanque_falla.tipo_falla == 'pulso')
-                                              & (fallas_tanque.df_tanque_falla.caracteristica_1 == 0.025)
-                                              & (fallas_tanque.df_tanque_falla.caracteristica_2 == 80)]
-ej_varianza_pred = fallas_tanque.df_tanque_falla[(fallas_tanque.df_tanque_falla.tipo_falla == 'varianza')
-                                                 & (fallas_tanque.df_tanque_falla.caracteristica_1 == 0.025)
-                                                 & (fallas_tanque.df_tanque_falla.caracteristica_2 == 16.1)]
+ej_deriva_pred = residuos_t_test_F_test_t_sim_grande.df_tanque_falla_residuos[(residuos_t_test_F_test_t_sim_grande.df_tanque_falla_residuos.tipo_falla == 'deriva')
+                                                                 & (residuos_t_test_F_test_t_sim_grande.df_tanque_falla_residuos.caracteristica_1 == 0.02)
+                                                                 & (residuos_t_test_F_test_t_sim_grande.df_tanque_falla_residuos.caracteristica_2 == 1250.1)]
+ej_pulso_pred = residuos_t_test_F_test_t_sim_grande.df_tanque_falla_residuos[(residuos_t_test_F_test_t_sim_grande.df_tanque_falla_residuos.tipo_falla == 'pulso')
+                                                                & (residuos_t_test_F_test_t_sim_grande.df_tanque_falla_residuos.caracteristica_1 == 0.025)
+                                                                & (residuos_t_test_F_test_t_sim_grande.df_tanque_falla_residuos.caracteristica_2 == 800)]
+ej_varianza_pred = residuos_t_test_F_test_t_sim_grande.df_tanque_falla_residuos[(residuos_t_test_F_test_t_sim_grande.df_tanque_falla_residuos.tipo_falla == 'varianza')
+                                                                   & (residuos_t_test_F_test_t_sim_grande.df_tanque_falla_residuos.caracteristica_1 == 0.025)
+                                                                   & (residuos_t_test_F_test_t_sim_grande.df_tanque_falla_residuos.caracteristica_2 == 1000.1)]
 
 
 markersize = 6.5
@@ -193,19 +193,19 @@ delta_plot = 5
 
 # t-test Deriva
 
-_, t_test_pred_drift, _, _ = f.fault_detector(ej_deriva_pred.nivel).t_test(ej_deriva_pred.nivel_sin_falla,
-                                                                           ej_deriva_pred.nivel_sin_falla.std(),
-                                                                           0.95, datos_tanque.detect_delta_media[delta_plot])
+_, t_test_pred_drift, _, _ = f.fault_detector(ej_deriva_pred.residuos).t_test(ej_deriva_pred.residuos_sin_falla,
+                                                                                 ej_deriva_pred.residuos_sin_falla.std(),
+                                                                                 0.95, datos_tanque.detect_delta_media_residuos_extend[delta_plot])
 
-ax_1.plot(ej_deriva_pred.tiempo, ej_deriva_pred.nivel, c='k',  alpha=0.7, linewidth=1)
-ax_1.plot(ej_deriva_pred.tiempo, ej_deriva_pred.nivel_sin_falla, c='k',  alpha=0.4, linewidth=1)
+ax_1.plot(ej_deriva_pred.tiempo, ej_deriva_pred.residuos, c='k',  alpha=0.7, linewidth=1)
+ax_1.plot(ej_deriva_pred.tiempo, ej_deriva_pred.residuos_sin_falla, c='k',  alpha=0.4, linewidth=1)
 ax_1.scatter(ej_deriva_pred.tiempo[(t_test_pred_drift == 1) & (ej_deriva_pred.condicion_falla != 0)],
-              ej_deriva_pred.nivel[(t_test_pred_drift == 1) & (ej_deriva_pred.condicion_falla != 0)], c='#108282',
-              alpha=0.7, s=markersize)
+             ej_deriva_pred.residuos[(t_test_pred_drift == 1) & (ej_deriva_pred.condicion_falla != 0)], c='#108282',
+             alpha=0.7, s=markersize)
 
 ax_1.scatter(ej_deriva_pred.tiempo[(ej_deriva_pred.condicion_falla == 0) & (t_test_pred_drift == 1)],
-              ej_deriva_pred.nivel[(ej_deriva_pred.condicion_falla == 0) & (t_test_pred_drift == 1)], c='#ad190f',
-              alpha=0.7, s=markersize)
+             ej_deriva_pred.residuos[(ej_deriva_pred.condicion_falla == 0) & (t_test_pred_drift == 1)], c='#ad190f',
+             alpha=0.7, s=markersize)
 ax_1.axhline(y=2, color='k', alpha=0.2, linestyle='--')
 ax_1.annotate('2m', xy=(24, 2.002), color='k', alpha=0.4)
 ax_1.annotate('t-test', xy=(3.5, 2.01), color='k', alpha=0.4, weight='bold')
@@ -213,37 +213,37 @@ ax_1.set_title('Deriva', color='#9e9a98', fontsize=10, weight='bold')
 
 # t-test Pulso
 
-_, t_test_pred_pulse, _, _ = f.fault_detector(ej_pulso_pred.nivel).t_test(ej_pulso_pred.nivel_sin_falla,
-                                                                          ej_pulso_pred.nivel_sin_falla.std(),
+_, t_test_pred_pulse, _, _ = f.fault_detector(ej_pulso_pred.residuos).t_test(ej_pulso_pred.residuos_sin_falla,
+                                                                          ej_pulso_pred.residuos_sin_falla.std(),
                                                                           0.95, datos_tanque.detect_delta_media[delta_plot])
-ax_3.plot(ej_pulso_pred.tiempo, ej_pulso_pred.nivel, c='k',  alpha=0.7, linewidth=1)
-ax_3.plot(ej_pulso_pred.tiempo, ej_pulso_pred.nivel_sin_falla, c='k',  alpha=0.4, linewidth=1)
+ax_3.plot(ej_pulso_pred.tiempo, ej_pulso_pred.residuos, c='k',  alpha=0.7, linewidth=1)
+ax_3.plot(ej_pulso_pred.tiempo, ej_pulso_pred.residuos_sin_falla, c='k',  alpha=0.4, linewidth=1)
 ax_3.scatter(ej_pulso_pred.tiempo[(t_test_pred_pulse == 1) & (ej_pulso_pred.condicion_falla != 0)],
-              ej_pulso_pred.nivel[(t_test_pred_pulse == 1) & (ej_pulso_pred.condicion_falla != 0)], c='#108282',
-              alpha=0.7, s=markersize)
+             ej_pulso_pred.residuos[(t_test_pred_pulse == 1) & (ej_pulso_pred.condicion_falla != 0)], c='#108282',
+             alpha=0.7, s=markersize)
 
 ax_3.scatter(ej_pulso_pred.tiempo[(ej_pulso_pred.condicion_falla == 0) & (t_test_pred_pulse == 1)],
-              ej_pulso_pred.nivel[(ej_pulso_pred.condicion_falla == 0) & (t_test_pred_pulse == 1)],
-              c='#ad190f', alpha=0.7, s=markersize)
+             ej_pulso_pred.residuos[(ej_pulso_pred.condicion_falla == 0) & (t_test_pred_pulse == 1)],
+             c='#ad190f', alpha=0.7, s=markersize)
 ax_3.axhline(y=2, color='k', alpha=0.2, linestyle='--')
 ax_3.annotate('2m', xy=(24, 2.002), color='k', alpha=0.4)
 ax_3.annotate('t-test', xy=(3.5, 2.01), color='k', alpha=0.4, weight='bold')
 ax_3.set_title('Pulso', color='#9e9a98', fontsize=10, weight='bold')
 
 # t-test Varianza
-_, t_test_pred_var, _, _ = f.fault_detector(ej_varianza_pred.nivel).t_test(ej_varianza_pred.nivel_sin_falla,
-                                                                           ej_varianza_pred.nivel_sin_falla.std(),
+_, t_test_pred_var, _, _ = f.fault_detector(ej_varianza_pred.residuos).t_test(ej_varianza_pred.residuos_sin_falla,
+                                                                           ej_varianza_pred.residuos_sin_falla.std(),
                                                                            0.95, datos_tanque.detect_delta_media[delta_plot])
 
-ax_5.plot(ej_varianza_pred.tiempo, ej_varianza_pred.nivel, c='k',  alpha=0.7, label='Nivel con falla', linewidth=1)
-ax_5.plot(ej_varianza_pred.tiempo, ej_varianza_pred.nivel_sin_falla, c='k',  alpha=0.4, label='Nivel sin falla', linewidth=1)
+ax_5.plot(ej_varianza_pred.tiempo, ej_varianza_pred.residuos, c='k',  alpha=0.7, label='Residuos con falla', linewidth=1)
+ax_5.plot(ej_varianza_pred.tiempo, ej_varianza_pred.residuos_sin_falla, c='k',  alpha=0.4, label='Residuos sin falla', linewidth=1)
 ax_5.scatter(ej_varianza_pred.tiempo[(t_test_pred_var == 1) & (ej_varianza_pred.condicion_falla != 0)],
-              ej_varianza_pred.nivel[(t_test_pred_var == 1) & (ej_varianza_pred.condicion_falla != 0)], c='#108282',
-              alpha=0.7, label='Verdaderos positivos', s=markersize)
+             ej_varianza_pred.residuos[(t_test_pred_var == 1) & (ej_varianza_pred.condicion_falla != 0)], c='#108282',
+             alpha=0.7, label='Verdaderos positivos', s=markersize)
 
 ax_5.scatter(ej_varianza_pred.tiempo[(ej_varianza_pred.condicion_falla == 0) & (t_test_pred_var == 1)],
-              ej_varianza_pred.nivel[(ej_varianza_pred.condicion_falla == 0) & (t_test_pred_var == 1)],
-              c='#ad190f', alpha=0.7, label='Falsos positivos', s=markersize)
+             ej_varianza_pred.residuos[(ej_varianza_pred.condicion_falla == 0) & (t_test_pred_var == 1)],
+             c='#ad190f', alpha=0.7, label='Falsos positivos', s=markersize)
 ax_5.axhline(y=2, color='k', alpha=0.2, linestyle='--')
 ax_5.annotate('2m', xy=(24, 2.002), color='k', alpha=0.4)
 ax_5.annotate('t-test', xy=(3.5, 2.01), color='k', alpha=0.4, weight='bold')
@@ -251,18 +251,18 @@ ax_5.set_title('Varianza', color='#9e9a98', fontsize=10, weight='bold')
 
 # F-test Deriva
 
-_, f_test_pred_drift, _, _ = f.fault_detector(ej_deriva_pred.nivel).f_test(ej_deriva_pred.nivel_sin_falla,
-                                                                           ej_deriva_pred.nivel_sin_falla.std(),
+_, f_test_pred_drift, _, _ = f.fault_detector(ej_deriva_pred.residuos).f_test(ej_deriva_pred.residuos_sin_falla,
+                                                                           ej_deriva_pred.residuos_sin_falla.std(),
                                                                            datos_tanque.detect_delta_var[delta_plot], 0.95)
 
-ax_2.plot(ej_deriva_pred.tiempo, ej_deriva_pred.nivel, c='k',  alpha=0.7, linewidth=1)
-ax_2.plot(ej_deriva_pred.tiempo, ej_deriva_pred.nivel_sin_falla, c='k',  alpha=0.4, linewidth=1)
+ax_2.plot(ej_deriva_pred.tiempo, ej_deriva_pred.residuos, c='k',  alpha=0.7, linewidth=1)
+ax_2.plot(ej_deriva_pred.tiempo, ej_deriva_pred.residuos_sin_falla, c='k',  alpha=0.4, linewidth=1)
 ax_2.scatter(ej_deriva_pred.tiempo[(f_test_pred_drift == 1) & (ej_deriva_pred.condicion_falla != 0)],
-             ej_deriva_pred.nivel[(f_test_pred_drift == 1) & (ej_deriva_pred.condicion_falla != 0)], c='#108282',
+             ej_deriva_pred.residuos[(f_test_pred_drift == 1) & (ej_deriva_pred.condicion_falla != 0)], c='#108282',
              alpha=0.7, s=markersize)
 
 ax_2.scatter(ej_deriva_pred.tiempo[(ej_deriva_pred.condicion_falla == 0) & (f_test_pred_drift == 1)],
-             ej_deriva_pred.nivel[(ej_deriva_pred.condicion_falla == 0) & (f_test_pred_drift == 1)], c='#ad190f',
+             ej_deriva_pred.residuos[(ej_deriva_pred.condicion_falla == 0) & (f_test_pred_drift == 1)], c='#ad190f',
              alpha=0.7, s=markersize)
 ax_2.axhline(y=2, color='k', alpha=0.2, linestyle='--')
 ax_2.annotate('2m', xy=(24, 2.002), color='k', alpha=0.4)
@@ -270,18 +270,18 @@ ax_2.annotate('F-test', xy=(3.5, 2.01), color='k', alpha=0.4, weight='bold')
 
 # F-test Pulso
 
-_, f_test_pred_pulse, _, _ = f.fault_detector(ej_pulso_pred.nivel).f_test(ej_pulso_pred.nivel_sin_falla,
-                                                                          ej_pulso_pred.nivel_sin_falla.std(),
+_, f_test_pred_pulse, _, _ = f.fault_detector(ej_pulso_pred.residuos).f_test(ej_pulso_pred.residuos_sin_falla,
+                                                                          ej_pulso_pred.residuos_sin_falla.std(),
                                                                           datos_tanque.detect_delta_var[delta_plot], 0.95)
 
-ax_4.plot(ej_pulso_pred.tiempo, ej_pulso_pred.nivel, c='k',  alpha=0.7, linewidth=1)
-ax_4.plot(ej_pulso_pred.tiempo, ej_pulso_pred.nivel_sin_falla, c='k',  alpha=0.4, linewidth=1)
+ax_4.plot(ej_pulso_pred.tiempo, ej_pulso_pred.residuos, c='k',  alpha=0.7, linewidth=1)
+ax_4.plot(ej_pulso_pred.tiempo, ej_pulso_pred.residuos_sin_falla, c='k',  alpha=0.4, linewidth=1)
 ax_4.scatter(ej_pulso_pred.tiempo[(f_test_pred_pulse == 1) & (ej_pulso_pred.condicion_falla != 0)],
-             ej_pulso_pred.nivel[(f_test_pred_pulse == 1) & (ej_pulso_pred.condicion_falla != 0)], c='#108282',
+             ej_pulso_pred.residuos[(f_test_pred_pulse == 1) & (ej_pulso_pred.condicion_falla != 0)], c='#108282',
              alpha=0.7, s=markersize)
 
 ax_4.scatter(ej_pulso_pred.tiempo[(ej_pulso_pred.condicion_falla == 0) & (f_test_pred_pulse == 1)],
-             ej_pulso_pred.nivel[(ej_pulso_pred.condicion_falla == 0) & (f_test_pred_pulse == 1)],
+             ej_pulso_pred.residuos[(ej_pulso_pred.condicion_falla == 0) & (f_test_pred_pulse == 1)],
              c='#ad190f', alpha=0.7, s=markersize)
 ax_4.axhline(y=2, color='k', alpha=0.2, linestyle='--')
 ax_4.annotate('2m', xy=(24, 2.002), color='k', alpha=0.4)
@@ -290,19 +290,19 @@ ax_4.annotate('F-test', xy=(3.5, 2.01), color='k', alpha=0.4, weight='bold')
 
 # F-test Varianza
 
-_, f_test_pred_var, _, _ = f.fault_detector(ej_varianza_pred.nivel).f_test(ej_varianza_pred.nivel_sin_falla,
-                                                                           ej_varianza_pred.nivel_sin_falla.std(),
+_, f_test_pred_var, _, _ = f.fault_detector(ej_varianza_pred.residuos).f_test(ej_varianza_pred.residuos_sin_falla,
+                                                                           ej_varianza_pred.residuos_sin_falla.std(),
                                                                            datos_tanque.detect_delta_var[delta_plot], 0.95)
 
-ax_6.plot(ej_varianza_pred.tiempo, ej_varianza_pred.nivel, c='k',  alpha=0.7, label='Nivel con falla', linewidth=1)
-l3, = ax_6.plot(ej_varianza_pred.tiempo, ej_varianza_pred.nivel_sin_falla, c='k',  alpha=0.4, linewidth=1, linestyle='-')
+ax_6.plot(ej_varianza_pred.tiempo, ej_varianza_pred.residuos, c='k',  alpha=0.7, label='Residuos con falla', linewidth=1)
+l3, = ax_6.plot(ej_varianza_pred.tiempo, ej_varianza_pred.residuos_sin_falla, c='k',  alpha=0.4, linewidth=1, linestyle='-')
 l1 = ax_6.scatter(ej_varianza_pred.tiempo[(f_test_pred_var == 1) & (ej_varianza_pred.condicion_falla != 0)],
-             ej_varianza_pred.nivel[(f_test_pred_var == 1) & (ej_varianza_pred.condicion_falla != 0)], c='#108282',
-             alpha=0.7, label='Verdaderos positivos', s=markersize)
+                  ej_varianza_pred.residuos[(f_test_pred_var == 1) & (ej_varianza_pred.condicion_falla != 0)], c='#108282',
+                  alpha=0.7, label='Verdaderos positivos', s=markersize)
 
 l2 = ax_6.scatter(ej_varianza_pred.tiempo[(ej_varianza_pred.condicion_falla == 0) & (f_test_pred_var == 1)],
-             ej_varianza_pred.nivel[(ej_varianza_pred.condicion_falla == 0) & (f_test_pred_var == 1)],
-             c='#ad190f', alpha=0.7, label='Falsos positivos', s=markersize)
+                  ej_varianza_pred.residuos[(ej_varianza_pred.condicion_falla == 0) & (f_test_pred_var == 1)],
+                  c='#ad190f', alpha=0.7, label='Falsos positivos', s=markersize)
 l4 = ax_6.axhline(y=2, color='k', alpha=0.2, linestyle='--')
 ax_6.annotate('2m', xy=(24, 2.002), color='k', alpha=0.4)
 ax_6.annotate('F-test', xy=(3.5, 2.01), color='k', alpha=0.4, weight='bold')
@@ -324,7 +324,7 @@ for ax in [ax_1, ax_2, ax_3, ax_4, ax_5, ax_6]:
     ax.set_xlim([3.3, 25])
 
 legend_1 = fig.legend((l1, l2), ('Verdadero positivo', 'Falso positivo'), 'upper left', frameon=False)
-legend_2 = fig.legend((l3, l4), ('Nivel sin falla', 'Set point'), 'upper right', frameon=False)
+legend_2 = fig.legend((l3, l4), ('Residuos sin falla', 'Set point'), 'upper right', frameon=False)
 
 for l in legend_1.get_texts():
     l.set_fontsize(8)
@@ -333,26 +333,26 @@ for ll in legend_2.get_texts():
     ll.set_fontsize(8)
     ll.set_alpha(0.7)
 plt.tight_layout(h_pad=2)
-
+'''
 '''________________________________________________Cuarta Grafica____________________________________________________'''
 
 sep_1 = 0.001
 sep_2 = 0.01
 
-fig, ax = plt.subplots(nrows=2, ncols=1)
+fig, ax = plt.subplots(nrows=2, ncols=1, sharex=True)
 ax_2 = ax[0].twiny()
 ax_3 = ax[1].twiny()
 fig.subplots_adjust(wspace=0.05)
 
-groups = t_test_F_test.FDR_FAR_fallas_tanque.groupby(level=['delta'])
+groups = residuos_t_test_F_test_t_sim_grande.FDR_FAR_fallas_tanque_residuos.groupby(level=['delta'])
 FDR_FAR_fallas_tanque_por_delta = groups.agg('mean')
 
-ax[0].plot(datos_tanque.detect_delta_media*100/2, FDR_FAR_fallas_tanque_por_delta.ttest_FDR, marker='.', color='#108282', label='t-test: FDR')
-ax[0].plot(datos_tanque.detect_delta_media*100/2, FDR_FAR_fallas_tanque_por_delta.ttest_FAR, marker='.', color='#ad190f', label='t-test: FAR')
+ax[0].plot(datos_tanque.detect_delta_media_residuos_extend, FDR_FAR_fallas_tanque_por_delta.ttest_FDR, marker='.', color='#108282', label='t-test: FDR')
+ax[0].plot(datos_tanque.detect_delta_media_residuos_extend, FDR_FAR_fallas_tanque_por_delta.ttest_FAR, marker='.', color='#ad190f', label='t-test: FAR')
 ax[0].set_xlabel(r'$\Delta\mu (\%)$', color='k', alpha=0.8)
 
-ax[1].plot(datos_tanque.detect_delta_var*100/np.var(fallas_tanque.nivel_ee), FDR_FAR_fallas_tanque_por_delta.ftest_FDR, marker='.', color='#5becff', label='F-test: FDR')
-ax[1].plot(datos_tanque.detect_delta_var*100/np.var(fallas_tanque.nivel_ee), FDR_FAR_fallas_tanque_por_delta.ftest_FAR, marker='.', color='#ed6145', label='F-test: FAR')
+ax[1].plot(datos_tanque.detect_delta_var_residuos_extend, FDR_FAR_fallas_tanque_por_delta.ftest_FDR, marker='.', color='#5becff', label='F-test: FDR')
+ax[1].plot(datos_tanque.detect_delta_var_residuos_extend, FDR_FAR_fallas_tanque_por_delta.ftest_FAR, marker='.', color='#ed6145', label='F-test: FAR')
 ax[1].set_xlabel(r'$\Delta\sigma^2 (\%)$', color='k', alpha=0.8)
 
 ax_2.set_xlabel('N', alpha=0.8, fontsize=6.5)
@@ -365,8 +365,8 @@ legends_2 = ax[0].legend(frameon=False, loc='lower left')
 for l in legends_2.get_texts():
     l.set_alpha(0.8)
 
-ax_2.set_xticks(np.arange(0, len(datos_tanque.detect_delta_media), 1))
-ax_3.set_xticks(np.arange(0, len(datos_tanque.detect_delta_var), 1))
+ax_2.set_xticks(np.arange(0, len(datos_tanque.detect_delta_media_residuos_extend), 1))
+ax_3.set_xticks(np.arange(0, len(datos_tanque.detect_delta_var_residuos_extend), 1))
 
 ax_2.set_xticklabels(['{}'.format(int(N)) for N in FDR_FAR_fallas_tanque_por_delta.N_ttest])
 ax_3.set_xticklabels(['{}'.format(int(N)) for N in FDR_FAR_fallas_tanque_por_delta.N_ftest])
@@ -392,17 +392,17 @@ ax[1].tick_params(axis='both', left='off', top='off', bottom='off')
 ax_2.tick_params(axis='both', top='off')
 ax_3.tick_params(axis='both', top='off')
 
-major_ticks_ttest_x = np.linspace(min(datos_tanque.detect_delta_media*100/2), max(datos_tanque.detect_delta_media*100/2), 5, endpoint=True)
-major_ticks_ftest_x = np.linspace(min(datos_tanque.detect_delta_var*100/np.var(fallas_tanque.nivel_ee)), max(datos_tanque.detect_delta_var*100/np.var(fallas_tanque.nivel_ee)), 5, endpoint=True)
+major_ticks_ttest_x = np.linspace(min(datos_tanque.detect_delta_media_residuos_extend), max(datos_tanque.detect_delta_media_residuos_extend), 5, endpoint=True)
+major_ticks_ftest_x = np.linspace(min(datos_tanque.detect_delta_var_residuos_extend), max(datos_tanque.detect_delta_var_residuos_extend), 5, endpoint=True)
 major_ticks_y = np.linspace(0, 1, 5, endpoint=True)
 
-ax[0].set_xticklabels(['{:.2e}'.format(i) for i in major_ticks_ttest_x])
-ax[1].set_xticklabels(['{:.2e}'.format(i) for i in major_ticks_ftest_x])
+ax[0].set_xticklabels(['{:.2e}'.format(i) for i in major_ticks_ttest_x*100])
+ax[1].set_xticklabels(['{:.2e}'.format(i) for i in major_ticks_ftest_x*100])
 
-ax[0].set_xlim([min(datos_tanque.detect_delta_media*100/2)-min(datos_tanque.detect_delta_media*100/2)/10,
-                max(datos_tanque.detect_delta_media*100/2)+min(datos_tanque.detect_delta_media*100/2)/10])
-ax[1].set_xlim([min(datos_tanque.detect_delta_var*100/np.var(fallas_tanque.nivel_ee))-min(datos_tanque.detect_delta_var*100/np.var(fallas_tanque.nivel_ee))/2,
-                max(datos_tanque.detect_delta_var*100/np.var(fallas_tanque.nivel_ee))+min(datos_tanque.detect_delta_var*100/np.var(fallas_tanque.nivel_ee))/2])
+ax[0].set_xlim([min(datos_tanque.detect_delta_media_residuos_extend)-min(datos_tanque.detect_delta_media_residuos_extend)/10,
+                max(datos_tanque.detect_delta_media_residuos_extend)+min(datos_tanque.detect_delta_media_residuos_extend)/10])
+ax[1].set_xlim([min(datos_tanque.detect_delta_var_residuos_extend)-min(datos_tanque.detect_delta_var_residuos_extend)/2,
+                max(datos_tanque.detect_delta_var_residuos_extend)+min(datos_tanque.detect_delta_var_residuos_extend)/2])
 
 ax[0].xaxis.set_ticks(major_ticks_ttest_x)
 ax[1].xaxis.set_ticks(major_ticks_ftest_x)
@@ -413,3 +413,4 @@ fig.subplots_adjust(top=0.83, hspace=0.8)
 fig.suptitle(r'Promedios de FDR y FAR por Método y $\Delta\mu$ y $\Delta\sigma^2$ a Detectar', size=12, color='k',
              fontweight='bold', alpha=0.7)
 plt.show()
+
