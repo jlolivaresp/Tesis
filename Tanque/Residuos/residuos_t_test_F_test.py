@@ -19,40 +19,42 @@ def senal_cuadrada_normal_dist(size, mean, std, T):
     senal_cuadrada = [np.ones(T)*i for i in normal_periods]
     return np.concatenate(senal_cuadrada).ravel()[0:size]
 
-q_modelaje = senal_cuadrada_normal_dist(len(datos_tanque.t_sim), 0, 1, 5)
+q_modelaje = senal_cuadrada_normal_dist(len(datos_tanque.t_sim), 0, 1, 25)
 
 # Simulamos el nivel del tanque para este caudal
 
 nivel_modelaje = simultank(datos_tanque.area, datos_tanque.nivel_inicial, datos_tanque.r_sim, q_modelaje,
                            datos_tanque.t_i, datos_tanque.t_f, datos_tanque.paso)[datos_tanque.tss_2:]
 
-# Normalizamos los datos
-
-norm_q_modelaje = q_modelaje/np.linalg.norm(q_modelaje)
-norm_nivel_modelaje = nivel_modelaje/np.linalg.norm(nivel_modelaje)
-
 # Aplicamos el modelo ARMAX y obtenemos los parametros
 
 model = ARIMA(endog=nivel_modelaje, order=(1, 0, 0), exog=q_modelaje[datos_tanque.tss_2:])
 model_fit = model.fit(trend='nc', disp=False)
 
-parametros = model_fit.params
+# Imprimimos los resultados del modelo ARX(1) y sus parametros
 
-# print(model_fit.summary())
+parametros = model_fit.params
+print(parametros)
+print(model_fit.summary())
 
 # Construimos el DataFrame al que anexaremos las columnas de residuos y de FDR y FAR
 
 grupos = fallas_tanque.df_tanque_falla.groupby(['tipo_falla', 'caracteristica_1', 'caracteristica_2'])
-
 nivel_pred_todos = np.zeros([])
 nivel_pred_sin_falla_todos = np.zeros([])
+
+# Para cada simulacion, se predice el nivel con el ARX(1) (todas daran lo mismo ya que el valor inicial del modelo es
+# nivel = 0m y el caudal Q es constante (Q = 10m^3/h), valores a partir de los cuales empieza a predecir)
 
 for grupo in grupos:
     nivel_pred = np.zeros(len(grupo[1]))
     nivel_pred_sin_falla = np.zeros(len(grupo[1]))
+
     for i in range(1, len(nivel_pred)):
-        nivel_pred[i] = parametros[1]*grupo[1].nivel.values[i-1] + parametros[0]*grupo[1].nivel.values[i-1]
-        nivel_pred_sin_falla[i] = parametros[1]*grupo[1].nivel_sin_falla.values[i-1] + parametros[0]*grupo[1].nivel_sin_falla.values[i-1]
+        # nivel_pred[i] = parametros[1]*grupo[1].nivel.values[i-1] + parametros[0]*grupo[1].caudal.values[i-1]
+        # nivel_pred[i] = nivel_pred[i-1]*parametros[1] + parametros[0]*grupo[1].caudal.values[i-1]
+        nivel_pred[i] = nivel_pred[i-1]*0.8 + 0.04*grupo[1].caudal.values[i-1]
+        nivel_pred_sin_falla[i] = 0.8*grupo[1].nivel_sin_falla.values[i-1] + 0.04*grupo[1].caudal.values[i-1]
     nivel_pred_todos = np.append(nivel_pred_todos, nivel_pred)
     nivel_pred_sin_falla_todos = np.append(nivel_pred_sin_falla_todos, nivel_pred_sin_falla)
 nivel_pred_todos = np.delete(nivel_pred_todos, 0)
@@ -61,12 +63,31 @@ nivel_pred_sin_falla_todos = np.delete(nivel_pred_sin_falla_todos, 0)
 df_tanque_falla_residuos = fallas_tanque.df_tanque_falla
 df_tanque_falla_residuos['nivel_armax'] = nivel_pred_todos
 df_tanque_falla_residuos['residuos'] = df_tanque_falla_residuos.nivel - df_tanque_falla_residuos.nivel_armax
-df_tanque_falla_residuos['nivel_armax_sin_falla'] = nivel_pred_sin_falla_todos
+# df_tanque_falla_residuos['nivel_armax_sin_falla'] = nivel_pred_sin_falla_todos
 df_tanque_falla_residuos['residuos_sin_falla'] = df_tanque_falla_residuos.nivel_sin_falla - \
-                                                 df_tanque_falla_residuos.nivel_armax_sin_falla
+                                                 df_tanque_falla_residuos.nivel_armax
+
+# Graficamos los valores de nivel predicho (en esta grafica se muestran los niveles predichos para cada simulacion,
+# es por ello que queda en forma de sierra, ya que cada simulacion comienza en nivel = 0m y va subiendo el nivel,
+# tratando de alcanzar el estado estacionario)
+
+plt.figure()
+plt.plot(df_tanque_falla_residuos.nivel_sin_falla, color='blue', alpha=0.5)
+plt.plot(df_tanque_falla_residuos.nivel_armax, color='red', alpha=0.5)
+plt.title('Nivel predicho por ARMAX para cada simulacion')
+plt.xlabel('Tiempo h')
+plt.ylabel('Nivel (m)')
+plt.figure()
+plt.plot(df_tanque_falla_residuos.residuos, color='red', alpha=0.5)
+plt.plot(df_tanque_falla_residuos.residuos_sin_falla, color='blue', alpha=0.5)
+plt.show()
+
+# Hasta aca el problema de la simulacion y prediccion con el ARX
+# A partir de aca detectamos las fallas con los residuos (ignorar esta parte si se quiere)
+
 # Graficamos los Histogramas de nivel y residuos
-'''
-df_tanque_falla_residuos[['residuos', 'residuos_sin_falla']].hist(bins=25, normed=True, range=(0, 0.3), sharex=True, sharey=True)
+
+df_tanque_falla_residuos[['residuos', 'residuos_sin_falla']].hist(bins=25, normed=True, range=(-0.3, 0.3), sharex=True, sharey=True)
 plt.suptitle('Densidad de Probabilidades en Residuos Con y Sin Fallas')
 df_tanque_falla_residuos[['nivel','nivel_sin_falla']].hist(bins=25, normed=True, sharex=True, sharey=True)
 plt.suptitle('Densidad de Probabilidades en Nivel Con y Sin Fallas')
@@ -87,10 +108,10 @@ plt.plot(df_tanque_falla_residuos[(df_tanque_falla_residuos.tipo_falla == 'deriv
 plt.title('Residuos Con y Sin Falla (Ejemplo Deriva)')
 plt.xlabel('Tiempo (h)')
 plt.ylabel('Residuos (m)')
-plt.ylim([0.14, 0.19])
+plt.ylim([-0.02, 0.12])
 plt.legend()
-plt.show()
-'''
+#plt.show()
+
 
 # Graficamos N vs delta_media y delta_var
 
@@ -117,9 +138,9 @@ ax[0].set_title('Muestras Requeridas (N) para Detectar un Cambios en la Media de
 ax[1].set_title('con Desviacion Estandar de {:.3f} y 95% de Confiabilidad'.format(df_tanque_falla_residuos.nivel_sin_falla.std()))
 ax[0].legend()
 ax[1].legend()
-
+'''
 # Graficamos N vs delta_var
-
+'''
 fig, ax = plt.subplots(nrows=2, ncols=1, sharex=True)
 delta_var = np.arange(1e-6, 1e-5, 1e-6)
 fig.subplots_adjust(hspace=0.35)
@@ -146,7 +167,7 @@ ax[1].plot(delta_var, N_plot_nivel, label='Caso Nivel', c='r', alpha=0.5)
 ax[0].set_ylabel('N')
 ax[1].set_ylabel('N')
 plt.xlabel(r'$\Delta\sigma^2$')
-ax[0].set_title('Muestras Requeridas (N) para Detectar un Cambios en la Verianza de $\Delta\sigma^2$ \n '
+ax[0].set_title('Muestras Requeridas (N) para Detectar un Cambios en la Varianza de $\Delta\sigma^2$ \n '
                 'con Desviacion Estandar de {:.3f} y 95% de Confiabilidad'.format(df_tanque_falla_residuos.residuos_sin_falla.std()))
 ax[1].set_title('con Desviacion Estandar de {:.3f} y 95% de Confiabilidad'.format(df_tanque_falla_residuos.nivel_sin_falla.std()))
 ax[0].legend()
@@ -157,6 +178,7 @@ plt.show()
 '''
 
 # Detectamos las fallas con t-test y F-test
+
 
 print(df_tanque_falla_residuos.describe())
 
@@ -183,6 +205,7 @@ for j in datos_tanque.detect_delta_media_residuos:
         N_vector_ttest = np.append(N_vector_ttest, N)
 FDR_ttest = tp_mat/(tp_mat+fn_mat)
 FAR_ttest = fp_mat/(fp_mat+tn_mat)
+print(FDR_ttest.mean(), FAR_ttest.mean())
 
 tp_mat = np.array([])
 tn_mat = np.array([])
@@ -219,8 +242,6 @@ FDR_FAR_fallas_tanque_residuos = pd.DataFrame(data={'ttest_FDR': FDR_ttest, 'tte
                                                         'ftest_FDR', 'ftest_FAR', 'intensidad_falla', 'N_ttest',
                                                         'N_ftest'])
 
-grupos = FDR_FAR_fallas_tanque_residuos.groupby(['delta', 'tipo_falla'])
-for i in grupos:
-    print(i)
 
 #FDR_FAR_fallas_tanque_residuos.set_index(['delta', 'tipo_falla'], inplace=True)
+

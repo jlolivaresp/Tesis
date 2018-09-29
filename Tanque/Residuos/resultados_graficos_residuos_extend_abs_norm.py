@@ -1,4 +1,4 @@
-import residuos_t_test_F_test_t_sim_grande
+import residuos_t_test_F_test_t_sim_extend_abs_norm
 import matplotlib.pyplot as plt
 import numpy as np
 import datos_tanque
@@ -7,10 +7,10 @@ import fallas_tanque
 import fault_2 as f
 import matplotlib.gridspec as gridspec
 
-a = residuos_t_test_F_test_t_sim_grande.FDR_FAR_fallas_tanque_residuos.groupby(level=['tipo_falla']).ttest_FDR.apply(lambda x: np.average(x))
-b = residuos_t_test_F_test_t_sim_grande.FDR_FAR_fallas_tanque_residuos.groupby(level=['tipo_falla']).ttest_FAR.apply(lambda x: np.average(x))
-c = residuos_t_test_F_test_t_sim_grande.FDR_FAR_fallas_tanque_residuos.groupby(level=['tipo_falla']).ftest_FDR.apply(lambda x: np.average(x))
-d = residuos_t_test_F_test_t_sim_grande.FDR_FAR_fallas_tanque_residuos.groupby(level=['tipo_falla']).ftest_FAR.apply(lambda x: np.average(x))
+a = residuos_t_test_F_test_t_sim_extend_abs_norm.FDR_FAR_fallas_tanque_residuos.groupby(level=['tipo_falla']).ttest_FDR.apply(lambda x: np.average(x))
+b = residuos_t_test_F_test_t_sim_extend_abs_norm.FDR_FAR_fallas_tanque_residuos.groupby(level=['tipo_falla']).ttest_FAR.apply(lambda x: np.average(x))
+c = residuos_t_test_F_test_t_sim_extend_abs_norm.FDR_FAR_fallas_tanque_residuos.groupby(level=['tipo_falla']).ftest_FDR.apply(lambda x: np.average(x))
+d = residuos_t_test_F_test_t_sim_extend_abs_norm.FDR_FAR_fallas_tanque_residuos.groupby(level=['tipo_falla']).ftest_FAR.apply(lambda x: np.average(x))
 
 
 pos = [2, 1, 0]
@@ -79,7 +79,7 @@ plt.figtext(0.35, 0.05, 'A: Deriva, B: Pulso, C: Varianza', color='k',alpha=0.7)
 
 '''______________________________________________Segunda grafica_____________________________________________________'''
 
-FDR_FAR_fallas_tanque_copy = residuos_t_test_F_test_t_sim_grande.FDR_FAR_fallas_tanque_residuos.copy()
+FDR_FAR_fallas_tanque_copy = residuos_t_test_F_test_t_sim_extend_abs_norm.FDR_FAR_fallas_tanque_residuos.copy()
 
 FDR_FAR_fallas_tanque_copy.sort_values(by=['intensidad_falla'], ascending=True, inplace=True)
 
@@ -344,7 +344,7 @@ ax_2 = ax[0].twiny()
 ax_3 = ax[1].twiny()
 fig.subplots_adjust(wspace=0.05)
 
-groups = residuos_t_test_F_test_t_sim_grande.FDR_FAR_fallas_tanque_residuos.groupby(level=['delta'])
+groups = residuos_t_test_F_test_t_sim_extend_abs_norm.FDR_FAR_fallas_tanque_residuos.groupby(level=['delta'])
 FDR_FAR_fallas_tanque_por_delta = groups.agg('mean')
 
 ax[0].plot(datos_tanque.detect_delta_media_residuos_extend, FDR_FAR_fallas_tanque_por_delta.ttest_FDR, marker='.', color='#108282', label='t-test: FDR')

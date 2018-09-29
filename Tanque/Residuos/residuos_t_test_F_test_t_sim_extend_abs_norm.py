@@ -9,6 +9,7 @@ import pandas as pd
 from sklearn.metrics import confusion_matrix
 import scipy.stats
 import scipy as sp
+from sklearn.preprocessing import StandardScaler
 
 # Generamos un vector caudal como senal cuadrada con media mean, desviacion estandar std y periodo T
 
@@ -38,7 +39,7 @@ model_fit = model.fit(trend='nc', disp=False)
 
 parametros = model_fit.params
 
-print(model_fit.summary())
+# print(model_fit.summary())
 
 # Construimos el DataFrame al que anexaremos las columnas de residuos y de FDR y FAR
 
@@ -51,8 +52,8 @@ for grupo in grupos:
     nivel_pred = np.zeros(len(grupo[1]))
     nivel_pred_sin_falla = np.zeros(len(grupo[1]))
     for i in range(1, len(nivel_pred)):
-        nivel_pred[i] = 0.8*nivel_pred[i-1] + 0.04*grupo[1].caudal.values[i-1]
-        nivel_pred_sin_falla[i] = 0.8*grupo[1].nivel_sin_falla.values[i-1] + 0.04*grupo[1].caudal.values[i-1]
+        nivel_pred[i] = parametros[1]*grupo[1].nivel.values[i-1] + parametros[0]*grupo[1].nivel.values[i-1]
+        nivel_pred_sin_falla[i] = parametros[1]*grupo[1].nivel_sin_falla.values[i-1] + parametros[0]*grupo[1].nivel_sin_falla.values[i-1]
     nivel_pred_todos = np.append(nivel_pred_todos, nivel_pred)
     nivel_pred_sin_falla_todos = np.append(nivel_pred_sin_falla_todos, nivel_pred_sin_falla)
 nivel_pred_todos = np.delete(nivel_pred_todos, 0)
@@ -61,21 +62,29 @@ nivel_pred_sin_falla_todos = np.delete(nivel_pred_sin_falla_todos, 0)
 df_tanque_falla_residuos = fallas_tanque_extend.df_tanque_falla
 df_tanque_falla_residuos['nivel_armax'] = nivel_pred_todos
 df_tanque_falla_residuos['residuos'] = df_tanque_falla_residuos.nivel - df_tanque_falla_residuos.nivel_armax
+df_tanque_falla_residuos['nivel_armax_sin_falla'] = nivel_pred_sin_falla_todos
 df_tanque_falla_residuos['residuos_sin_falla'] = df_tanque_falla_residuos.nivel_sin_falla - \
-                                                 df_tanque_falla_residuos.nivel_armax
-print(df_tanque_falla_residuos.describe())
+                                                 df_tanque_falla_residuos.nivel_armax_sin_falla
+# Aplicamos valor absoluto y normalizamos
+df_tanque_falla_residuos['residuos_abs'] = np.abs(df_tanque_falla_residuos.residuos)
+df_tanque_falla_residuos['residuos_sin_falla_abs'] = np.abs(df_tanque_falla_residuos.residuos_sin_falla)
 
-plt.figure()
-plt.plot(df_tanque_falla_residuos.nivel_sin_falla, color='blue', alpha=0.5)
-plt.plot(df_tanque_falla_residuos.nivel_armax, color='red', alpha=0.5)
-plt.title('Nivel predicho por ARMAX para cada simulacion')
-plt.xlabel('Tiempo h')
-plt.ylabel('Nivel (m)')
-plt.figure()
-plt.plot(df_tanque_falla_residuos.residuos, color='red', alpha=0.5)
-plt.plot(df_tanque_falla_residuos.residuos_sin_falla, color='blue', alpha=0.5)
-plt.show()
+residuos_abs_normed = np.array([])
+residuos_sin_falla_abs_normed = np.array([])
 
+for grupo in grupos:
+    scaler_residuos = StandardScaler().fit(grupo[1].residuos_sin_falla_abs)
+    rescaled_residuos = scaler_residuos.transform(grupo[1].residuos_abs)
+    residuos_abs_normed = np.append(residuos_abs_normed, rescaled_residuos)
+
+    rescaled_residuos_sin_falla = scaler_residuos.transform(grupo[1].residuos_sin_falla_abs)
+    residuos_sin_falla_abs_normed = np.append(residuos_sin_falla_abs_normed, rescaled_residuos_sin_falla)
+
+df_tanque_falla_residuos['residuos_abs_norm'] = residuos_abs_normed
+df_tanque_falla_residuos['residuos_sin_falla_abs_norm'] = residuos_sin_falla_abs_normed
+
+print(df_tanque_falla_residuos.residuos_abs_norm.describe())
+print(df_tanque_falla_residuos.residuos_sin_falla_abs_norm.describe())
 # Detectamos las fallas con t-test y F-test
 
 groups = df_tanque_falla_residuos.groupby(['tipo_falla', 'caracteristica_1', 'caracteristica_2'])
@@ -88,10 +97,10 @@ N_vector_ttest = np.array([])
 
 for j in datos_tanque.detect_delta_media_residuos_extend:
     for group in groups:
-        _, t_test_pred, _, N = f.fault_detector(group[1].residuos[1:]).t_test(group[1].residuos_sin_falla,
-                                                                              group[1].residuos_sin_falla.std(), 0.95, j)
+        _, t_test_pred, _, N = f.fault_detector(group[1].residuos_abs_norm[1:]).t_test(group[1].residuos_sin_falla_abs_norm,
+                                                                              group[1].residuos_sin_falla_abs_norm.std(), 0.95, j)
         a = [1 if i is True else 0 for i in group[1].condicion_falla[1:].values]
-        print(N)
+
         tn, fp, fn, tp = confusion_matrix(y_true=a, y_pred=t_test_pred).ravel()
         tp_mat = np.append(tp_mat, tp)
         tn_mat = np.append(tn_mat, tn)
@@ -110,12 +119,12 @@ intensidad_falla = np.array([])
 tipo_falla = np.array([])
 N_vector_ftest = np.array([])
 
-for j in datos_tanque.detect_delta_var_residuos:
+for j in datos_tanque.detect_delta_var_residuos_extend:
     for group in groups:
-        _, F_test_pred, _, N = f.fault_detector(group[1].residuos[1:]).f_test(group[1].residuos_sin_falla,
-                                                                              group[1].residuos_sin_falla.std(), j, 0.95)
+        _, F_test_pred, _, N = f.fault_detector(group[1].residuos_abs_norm[1:]).f_test(group[1].residuos_sin_falla_abs_norm,
+                                                                              group[1].residuos_sin_falla_abs_norm.std(), j, 0.95)
         a = [1 if i is True else 0 for i in group[1].condicion_falla[1:].values]
-        print(N)
+
         tn, fp, fn, tp = confusion_matrix(y_true=a, y_pred=F_test_pred).ravel()
         tp_mat = np.append(tp_mat, tp)
         tn_mat = np.append(tn_mat, tn)
@@ -138,5 +147,4 @@ FDR_FAR_fallas_tanque_residuos = pd.DataFrame(data={'ttest_FDR': FDR_ttest, 'tte
                                                        'N_ftest'])
 
 FDR_FAR_fallas_tanque_residuos.set_index(['delta', 'tipo_falla'], inplace=True)
-
-print(FDR_ttest.mean(), FAR_ttest.mean(), FDR_Ftest.mean(), FAR_Ftest.mean())
+print(FDR_FAR_fallas_tanque_residuos)

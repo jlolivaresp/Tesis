@@ -14,7 +14,7 @@ class fault_detector(object):
         vector_to_analyze = np.copy(self.Vector_faulty)
 
         if N == 'auto':
-            N = ceil((stand_dev*sp.stats.norm.ppf((1+conf_lev)/2)/delta_mean)**2)
+            N = ceil((stand_dev*sp.stats.norm.ppf((1-conf_lev)/2)/delta_mean)**2)
 
         falla_bool = np.zeros(len(vector_to_analyze))
 

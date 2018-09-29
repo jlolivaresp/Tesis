@@ -16,7 +16,7 @@ np.random.seed(0)
 # Pulso -> Desviacion estandar del pulso y numero de muestras con pulso
 # Varianza -> Desviacion estandar de la varianza y tiempo en que finaliza la varianza
 columnas = ['tipo_falla', 'caracteristica_1', 'caracteristica_2', 'intensidad_falla', 'tiempo',
-            'nivel', 'nivel_sin_falla', 'condicion_falla']
+            'nivel', 'caudal', 'nivel_sin_falla', 'condicion_falla']
 df_tanque_falla = pd.DataFrame(columns=columnas)
 # Nivel del tanque a condiciones normales
 nivel = simultank(area=datos.area, nivel_inicial=datos.nivel_inicial, resist_hidraulica=datos.r_sim,
@@ -24,7 +24,7 @@ nivel = simultank(area=datos.area, nivel_inicial=datos.nivel_inicial, resist_hid
                   paso=datos.paso, analitic_sol=False) + np.random.normal(0, 0.005, len(datos.t_sim))
 nivel_ee = nivel[int(datos.tss_2/datos.paso):]
 print(datos.detect_delta_var[5]*100/np.var(nivel_ee))
-
+print(len(datos.q_sim))
 '''____________________________________________ Falla de deriva _____________________________________________________'''
 
 # Columna de tipo de falla
@@ -47,11 +47,12 @@ for h in datos.delta_h:
         # Consideramos unicamente los datos de tiempo mayor al tiempo de establecimiento al 2%
         nivel_falla_drift_ee = nivel_falla_deriva[int(datos.tss_2/datos.paso):]
         h_falla_bool_ee = h_falla_bool[int(datos.tss_2/datos.paso):]
-
+        q_sim_ee = datos.q_sim[int(datos.tss_2/datos.paso):]
         # Creamos un DataFrame con los resultados
         df_tanque_falla_h = pd.DataFrame({'tiempo': datos.t_sim_ee, 'tipo_falla': tipo,
                                           'caracteristica_1': caracteristica_1, 'caracteristica_2': caracteristica_2,
                                           'intensidad_falla':intensidad_falla, 'nivel': nivel_falla_drift_ee,
+                                          'caudal': q_sim_ee,
                                           'nivel_sin_falla': nivel_ee, 'condicion_falla': h_falla_bool_ee},
                                          columns=columnas)
 
@@ -81,11 +82,12 @@ for amp in datos.amplitud_pulso:
                                                            step=datos.paso, N=N, amplitude=amp,
                                                            random_seed=datos.random_seed, mode=datos.modo)
         intensidad_falla = np.ones((len(datos.t_sim_ee)))*frac_muestras_falla*amp
-
+        q_sim_ee = datos.q_sim[int(datos.tss_2/datos.paso):]
         # Creamos un DataFrame con los resultados
         df_tanque_falla_pulso = pd.DataFrame({'tiempo': datos.t_sim_ee, 'tipo_falla': tipo,
                                              'caracteristica_1': caracteristica_1, 'caracteristica_2': caracteristica_2,
                                               'intensidad_falla':intensidad_falla, 'nivel': nivel_falla_pulso,
+                                              'caudal': q_sim_ee,
                                               'nivel_sin_falla': nivel_ee, 'condicion_falla': pulso_bool},
                                              columns=columnas)
 
@@ -114,14 +116,14 @@ for amp in datos.amplitud_var:
             f.fault_generator(nivel_var_ee).variance(start=datos.t_i_falla_var, stop=t_f, step=datos.paso,
                                                      stand_dev=amp, random_seed=datos.random_seed)
         intensidad_falla = np.ones((len(datos.t_sim_ee)))*frac_muestras_falla*amp
-
+        q_sim_ee = datos.q_sim[int(datos.tss_2/datos.paso):]
         # Creamos un DataFrame con los resultados
         df_tanque_falla_var = pd.DataFrame({'tiempo': datos.t_sim_ee, 'tipo_falla': tipo,
                                            'caracteristica_1': caracteristica_1,
                                             'caracteristica_2': caracteristica_2, 'intensidad_falla': intensidad_falla,
                                             'nivel': nivel_falla_var, 'nivel_sin_falla': nivel_ee,
+                                            'caudal': q_sim_ee,
                                             'condicion_falla': var_bool}, columns=columnas)
 
         # Anexamos los datos de falla nuevos al DataFrame general
         df_tanque_falla = df_tanque_falla.append(df_tanque_falla_var, ignore_index=True)
-
