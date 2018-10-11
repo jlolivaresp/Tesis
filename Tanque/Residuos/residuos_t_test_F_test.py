@@ -34,7 +34,7 @@ model_fit = model.fit(trend='nc', disp=False)
 # Imprimimos los resultados del modelo ARX(1) y sus parametros
 
 parametros = model_fit.params
-print(parametros)
+# print(parametros)
 print(model_fit.summary())
 
 # Construimos el DataFrame al que anexaremos las columnas de residuos y de FDR y FAR
@@ -46,6 +46,7 @@ nivel_pred_sin_falla_todos = np.zeros([])
 # Para cada simulacion, se predice el nivel con el ARX(1) (todas daran lo mismo ya que el valor inicial del modelo es
 # nivel = 0m y el caudal Q es constante (Q = 10m^3/h), valores a partir de los cuales empieza a predecir)
 
+'''
 for grupo in grupos:
     nivel_pred = np.zeros(len(grupo[1]))
     nivel_pred_sin_falla = np.zeros(len(grupo[1]))
@@ -59,6 +60,17 @@ for grupo in grupos:
     nivel_pred_sin_falla_todos = np.append(nivel_pred_sin_falla_todos, nivel_pred_sin_falla)
 nivel_pred_todos = np.delete(nivel_pred_todos, 0)
 nivel_pred_sin_falla_todos = np.delete(nivel_pred_sin_falla_todos, 0)
+'''
+
+nivel_pred = np.zeros(240)
+for i in range(1, 240):
+    nivel_pred[i] = nivel_pred[i-1]*0.8 + 0.04*10
+nivel_pred = nivel_pred[datos_tanque.tss_2:]
+
+nivel_pred_todos = np.delete(nivel_pred_todos, 0)
+
+for j in grupos:
+    nivel_pred_todos = np.append(nivel_pred_todos, nivel_pred)
 
 df_tanque_falla_residuos = fallas_tanque.df_tanque_falla
 df_tanque_falla_residuos['nivel_armax'] = nivel_pred_todos
@@ -77,10 +89,11 @@ plt.plot(df_tanque_falla_residuos.nivel_armax, color='red', alpha=0.5)
 plt.title('Nivel predicho por ARMAX para cada simulacion')
 plt.xlabel('Tiempo h')
 plt.ylabel('Nivel (m)')
+
 plt.figure()
 plt.plot(df_tanque_falla_residuos.residuos, color='red', alpha=0.5)
 plt.plot(df_tanque_falla_residuos.residuos_sin_falla, color='blue', alpha=0.5)
-plt.show()
+# plt.show()
 
 # Hasta aca el problema de la simulacion y prediccion con el ARX
 # A partir de aca detectamos las fallas con los residuos (ignorar esta parte si se quiere)
@@ -110,7 +123,7 @@ plt.xlabel('Tiempo (h)')
 plt.ylabel('Residuos (m)')
 plt.ylim([-0.02, 0.12])
 plt.legend()
-#plt.show()
+# plt.show()
 
 
 # Graficamos N vs delta_media y delta_var
@@ -193,7 +206,8 @@ N_vector_ttest = np.array([])
 for j in datos_tanque.detect_delta_media_residuos:
     for group in groups:
         _, t_test_pred, _, N = f.fault_detector(group[1].residuos[1:]).t_test(group[1].residuos_sin_falla,
-                                                                              group[1].residuos_sin_falla.std(), 0.95, j)
+                                                                              group[1].residuos_sin_falla.std(),
+                                                                              0.95, j, N=30)
         a = [1 if i is True else 0 for i in group[1].condicion_falla[1:].values]
 
         tn, fp, fn, tp = confusion_matrix(y_true=a, y_pred=t_test_pred).ravel()
@@ -205,7 +219,6 @@ for j in datos_tanque.detect_delta_media_residuos:
         N_vector_ttest = np.append(N_vector_ttest, N)
 FDR_ttest = tp_mat/(tp_mat+fn_mat)
 FAR_ttest = fp_mat/(fp_mat+tn_mat)
-print(FDR_ttest.mean(), FAR_ttest.mean())
 
 tp_mat = np.array([])
 tn_mat = np.array([])
@@ -218,7 +231,8 @@ N_vector_ftest = np.array([])
 for j in datos_tanque.detect_delta_var_residuos:
     for group in groups:
         _, F_test_pred, _, N = f.fault_detector(group[1].residuos[1:]).f_test(group[1].residuos_sin_falla,
-                                                                              group[1].residuos_sin_falla.std(), j, 0.95)
+                                                                              group[1].residuos_sin_falla.std(),
+                                                                              j, 0.95, N=30)
         a = [1 if i is True else 0 for i in group[1].condicion_falla[1:].values]
 
         tn, fp, fn, tp = confusion_matrix(y_true=a, y_pred=F_test_pred).ravel()
@@ -243,5 +257,6 @@ FDR_FAR_fallas_tanque_residuos = pd.DataFrame(data={'ttest_FDR': FDR_ttest, 'tte
                                                         'N_ftest'])
 
 
-#FDR_FAR_fallas_tanque_residuos.set_index(['delta', 'tipo_falla'], inplace=True)
+FDR_FAR_fallas_tanque_residuos.set_index(['delta', 'tipo_falla'], inplace=True)
 
+print(df_tanque_falla_residuos.describe())

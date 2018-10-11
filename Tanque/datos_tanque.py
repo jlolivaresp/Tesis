@@ -19,10 +19,9 @@ paso = 0.1                                              # Paso de integracion [h
 decimal = str(paso)[::-1].find('.')                     # Numero de decimales del paso
 t_i = 0                                                 # Tiempo inciial de la simulacion [h]
 t_f = tiempo                                            # Tiempo final de la simulacion [h]
-tss_2 = int(4*area*r/paso)                    # Tiempo de establecimiento del nivel
-print(tss_2)
+tss_2 = np.ceil(4*area*r/paso)                          # Posicion de Tiempo de establecimiento del nivel
 t_sim = np.arange(t_i, t_f, paso)                       # Vector de rangos de tiempo de la simulacion
-t_sim_ee = t_sim[int(tss_2/paso):]                      # Vector de tiempo de simulacion en estado estacionario
+t_sim_ee = t_sim[int(tss_2):]                           # Vector de tiempo de simulacion en estado estacionario
 q_sim = np.ones(tiempo/paso)*q                          # Vector de caudal para cada tiempo
 r_sim = np.ones(tiempo/paso)*r                          # Vector de resistencia hidraulica para cada tiempo
 
@@ -40,16 +39,16 @@ r_sim_extend = np.ones(tiempo_extend/paso)*r            # Vector de resistencia 
 '''Diferencias a detectar'''
 
 detect_delta_media = np.linspace(1e-2, 5e-2, 20)
-detect_delta_var = np.linspace(2.38144e-7, 5.9536e-7, 20)
+detect_delta_var = np.linspace(2.73006e-7, 6.82516e-7, 20)
 
-detect_delta_media_residuos = np.linspace(2.7873e-4, 1.39365e-3, 20)
-detect_delta_var_residuos = np.linspace(1.25e-5, 2.3e-3, 20)
+detect_delta_media_residuos = np.linspace(4.4385e-5, 2.21925e-4, 20)
+detect_delta_var_residuos = np.linspace(1.92133e-5, 4.80333e-5, 20)
 
 '''Falla de Deriva'''
 
 t_i_falla_deriva = 8                                        # Tiempo de inicio de la falla [h]
 t_f_falla_deriva = [8.2, 12.1, 16.1, 24]                    # Tiempos de finalizacion de la falla [h]
-delta_h_porcentaje = [1, 2.5, 5]                            # Variacion total del nivel del tanque [%]
+delta_h_porcentaje = [1, 1.75, 2.5]                            # Variacion total del nivel del tanque [%]
 delta_h = [i*2/100 for i in delta_h_porcentaje]             # Variacion total del nivel del tanque [m]
                                                             # *2 porque la media es 2m
 '''Falla de Pulso'''

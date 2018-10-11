@@ -1,4 +1,4 @@
-import fallas_tanque
+from residuos_t_test_F_test import df_tanque_falla_residuos as fallas_tanque
 import sklearn
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
@@ -12,11 +12,11 @@ import numpy as np
 import datos_tanque
 import matplotlib.pyplot as plt
 
-fallas_tanque = fallas_tanque.df_tanque_falla.copy(deep=True)
+fallas_tanque = fallas_tanque.copy(deep=True)
 
 # Dividimos los datos en inputs y outputs
 
-X = fallas_tanque.nivel.copy(deep=True)
+X = fallas_tanque.residuos.copy(deep=True)
 y = fallas_tanque.condicion_falla.copy(deep=True)*1
 y = y.astype('int')
 
@@ -74,7 +74,7 @@ print(matrix_standarized)
 num_folds = 10
 seed = 7
 kfold = KFold(n_splits=num_folds, random_state=seed)
-scoring = 'accuracy'
+scoring = 'roc_auc'
 
 result_crossval = cross_val_score(model, X_df, y, cv=kfold, scoring=scoring).mean()
 result_rescaled_crossval = cross_val_score(model_rescaled, rescaled_X_df, y, cv=kfold, scoring=scoring).mean()
@@ -173,7 +173,7 @@ ax[1].set_ylim([min(FAR_vector.ravel())-0.005, max(FAR_vector.ravel())+0.005])
 ax[0].set_ylabel('FDR')
 ax[1].set_ylabel('FAR')
 ax[1].set_xlabel('Lags')
-fig.suptitle('FDR y FAR Por kNN Con k Vecinos Más Cercanos', color='k', alpha=0.8, weight='bold')
+fig.suptitle('FDR y FAR Por kNN Con k Vecinos Más Cercanos - Residuos', color='k', alpha=0.8, weight='bold')
 
 ax[0].tick_params(axis='both', which='both', bottom=False, top=False, right=False, left=False)
 ax[1].tick_params(axis='both', which='both', bottom=False, top=False, right=False, left=False)

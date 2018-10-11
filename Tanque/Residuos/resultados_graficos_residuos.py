@@ -74,7 +74,7 @@ ax[0].tick_params(axis='y', right='off')
 ax[1].tick_params(axis='y', right='off')
 
 fig.subplots_adjust(top=0.83,bottom=0.1)
-fig.suptitle('Promedios de FDR y FAR por Método y Tipo de Falla', size=12, color='k',fontweight='bold',alpha=0.7)
+fig.suptitle('Promedios de FDR y FAR por Método y Tipo de Falla\nResiduos', size=12, color='k',fontweight='bold',alpha=0.7)
 plt.figtext(0.35, 0.05, 'A: Deriva, B: Pulso, C: Varianza', color='k',alpha=0.7)
 
 '''______________________________________________Segunda grafica_____________________________________________________'''
@@ -131,7 +131,7 @@ axes.axes.get_yaxis().set_visible(False)
 [i.set_alpha(0.6) for i in axes.get_xticklabels()]
 [i.set_fontsize(8) for i in axes.get_xticklabels()]
 
-axes.set_title('Promedios de FDR y FAR Por Intensidad de Falla\n(Mínima Intensidad = 1 - Máxima Intensidad = 12)',
+axes.set_title('Promedios de FDR y FAR Por Intensidad de Falla\n(Mínima Intensidad = 1 - Máxima Intensidad = 12) - Residuos',
                alpha=0.6, fontsize=10)
 axes.set_xlabel('Intensidad', alpha=0.6, fontsize=8)
 
@@ -344,7 +344,7 @@ ax_2 = ax[0].twiny()
 ax_3 = ax[1].twiny()
 fig.subplots_adjust(wspace=0.05)
 
-groups = t_test_F_test.FDR_FAR_fallas_tanque.groupby(level=['delta'])
+groups = residuos_t_test_F_test.FDR_FAR_fallas_tanque_residuos.groupby(level=['delta'])
 FDR_FAR_fallas_tanque_por_delta = groups.agg('mean')
 
 ax[0].plot(datos_tanque.detect_delta_media, FDR_FAR_fallas_tanque_por_delta.ttest_FDR, marker='.', color='#108282', label='t-test: FDR')

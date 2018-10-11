@@ -79,5 +79,4 @@ FDR_FAR_fallas_tanque = pd.DataFrame(data={'ttest_FDR': FDR_ttest, 'ttest_FAR': 
                                               'ftest_FDR', 'ftest_FAR', 'intensidad_falla', 'N_ttest', 'N_ftest'])
 
 FDR_FAR_fallas_tanque.set_index(['delta', 'tipo_falla'], inplace=True)
-print(FDR_FAR_fallas_tanque)
-
+#print(FDR_FAR_fallas_tanque)

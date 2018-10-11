@@ -20,14 +20,14 @@ class fault_detector(object):
 
         if N <= len(vector_to_analyze):
             cont = 0
-            while N+cont <= len(vector_to_analyze):
-                ttest_issermann = (non_faulty_data.mean() - vector_to_analyze[cont:N + cont].mean()) * \
+            while N*cont < len(vector_to_analyze):
+                ttest_issermann = (non_faulty_data.mean() - vector_to_analyze[cont*N:(cont+1)*N].mean()) * \
                                   math.sqrt(len(non_faulty_data) * N * (len(non_faulty_data) + N - 2) /
                                             (len(non_faulty_data) + N)) / \
                                   math.sqrt((len(non_faulty_data) - 1) * np.std(non_faulty_data) ** 2 + (N - 1) *
                                             stand_dev ** 2)
                 if abs(ttest_issermann) > sp.stats.t.ppf(conf_lev, len(non_faulty_data)+N-2):
-                    falla_bool[cont:N+cont] = np.ones(N)
+                    falla_bool[cont*N:N*(1+cont)] = np.ones(len(falla_bool[cont*N:N*(1+cont)]))
                 cont += 1
         else:
             print('N debe ser menor a la longitud del vector lista')
@@ -60,15 +60,15 @@ class fault_detector(object):
                               'cambio en la varianza de {}, pruebe indicando el valor de N'.format(delta_var))
                         break
             cont = 0
-            while N+cont <= len(vector_to_analyze):
+            while N*cont < len(vector_to_analyze):
                 dfn = len(non_faulty_data)
-                if np.std(vector_to_analyze[cont:N+cont]) > 0.0001:
-                    F_N1_N2 = (np.std(vector_to_analyze[cont:N+cont])/np.std(non_faulty_data))**2
+                if np.std(vector_to_analyze[cont*N:N*(1+cont)]) > 0.0001:
+                    F_N1_N2 = (np.std(vector_to_analyze[N*cont:N*(1+cont)])/np.std(non_faulty_data))**2
                     #F_N1_N2 = (max(F)/min(F))**2
                     F_table = sp.stats.f.ppf(q=conf_lev, dfn=dfn - 1, dfd=N - 1)
 
                     if F_N1_N2 > F_table:
-                        falla_bool[cont:N+cont] = np.ones(N)
+                        falla_bool[N*cont:N*(1+cont)] = np.ones(len(falla_bool[cont*N:N*(1+cont)]))
                 cont += 1
         fault_counter = len(falla_bool[falla_bool == 1])
         vector_detected = vector_to_analyze[falla_bool == 1]
