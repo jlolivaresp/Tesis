@@ -178,13 +178,13 @@ fig.add_subplot(ax_6, sharey=ax_1)
 
 ej_deriva_pred = fallas_tanque.df_tanque_falla[(fallas_tanque.df_tanque_falla.tipo_falla == 'deriva')
                                                & (fallas_tanque.df_tanque_falla.caracteristica_1 == 0.02)
-                                               & (fallas_tanque.df_tanque_falla.caracteristica_2 == 16.1)]
+                                               & (fallas_tanque.df_tanque_falla.caracteristica_2 == 8.1)]
 ej_pulso_pred = fallas_tanque.df_tanque_falla[(fallas_tanque.df_tanque_falla.tipo_falla == 'pulso')
                                               & (fallas_tanque.df_tanque_falla.caracteristica_1 == 0.025)
-                                              & (fallas_tanque.df_tanque_falla.caracteristica_2 == 80)]
+                                              & (fallas_tanque.df_tanque_falla.caracteristica_2 == 300)]
 ej_varianza_pred = fallas_tanque.df_tanque_falla[(fallas_tanque.df_tanque_falla.tipo_falla == 'varianza')
                                                  & (fallas_tanque.df_tanque_falla.caracteristica_1 == 0.025)
-                                                 & (fallas_tanque.df_tanque_falla.caracteristica_2 == 16.1)]
+                                                 & (fallas_tanque.df_tanque_falla.caracteristica_2 == 8.1)]
 
 
 markersize = 6.5
@@ -207,7 +207,7 @@ ax_1.scatter(ej_deriva_pred.tiempo[(ej_deriva_pred.condicion_falla == 0) & (t_te
               ej_deriva_pred.nivel[(ej_deriva_pred.condicion_falla == 0) & (t_test_pred_drift == 1)], c='#ad190f',
               alpha=0.7, s=markersize)
 ax_1.axhline(y=2, color='k', alpha=0.2, linestyle='--')
-ax_1.annotate('2m', xy=(24, 2.002), color='k', alpha=0.4)
+ax_1.annotate('2m', xy=(datos_tanque.t_f, 2.002), color='k', alpha=0.4)
 ax_1.annotate('t-test', xy=(3.5, 2.01), color='k', alpha=0.4, weight='bold')
 ax_1.set_title('Deriva', color='#9e9a98', fontsize=10, weight='bold')
 
@@ -226,7 +226,7 @@ ax_3.scatter(ej_pulso_pred.tiempo[(ej_pulso_pred.condicion_falla == 0) & (t_test
               ej_pulso_pred.nivel[(ej_pulso_pred.condicion_falla == 0) & (t_test_pred_pulse == 1)],
               c='#ad190f', alpha=0.7, s=markersize)
 ax_3.axhline(y=2, color='k', alpha=0.2, linestyle='--')
-ax_3.annotate('2m', xy=(24, 2.002), color='k', alpha=0.4)
+ax_3.annotate('2m', xy=(datos_tanque.t_f, 2.002), color='k', alpha=0.4)
 ax_3.annotate('t-test', xy=(3.5, 2.01), color='k', alpha=0.4, weight='bold')
 ax_3.set_title('Pulso', color='#9e9a98', fontsize=10, weight='bold')
 
@@ -245,7 +245,7 @@ ax_5.scatter(ej_varianza_pred.tiempo[(ej_varianza_pred.condicion_falla == 0) & (
               ej_varianza_pred.nivel[(ej_varianza_pred.condicion_falla == 0) & (t_test_pred_var == 1)],
               c='#ad190f', alpha=0.7, label='Falsos positivos', s=markersize)
 ax_5.axhline(y=2, color='k', alpha=0.2, linestyle='--')
-ax_5.annotate('2m', xy=(24, 2.002), color='k', alpha=0.4)
+ax_5.annotate('2m', xy=(datos_tanque.t_f, 2.002), color='k', alpha=0.4)
 ax_5.annotate('t-test', xy=(3.5, 2.01), color='k', alpha=0.4, weight='bold')
 ax_5.set_title('Varianza', color='#9e9a98', fontsize=10, weight='bold')
 
@@ -265,7 +265,7 @@ ax_2.scatter(ej_deriva_pred.tiempo[(ej_deriva_pred.condicion_falla == 0) & (f_te
              ej_deriva_pred.nivel[(ej_deriva_pred.condicion_falla == 0) & (f_test_pred_drift == 1)], c='#ad190f',
              alpha=0.7, s=markersize)
 ax_2.axhline(y=2, color='k', alpha=0.2, linestyle='--')
-ax_2.annotate('2m', xy=(24, 2.002), color='k', alpha=0.4)
+ax_2.annotate('2m', xy=(datos_tanque.t_f, 2.002), color='k', alpha=0.4)
 ax_2.annotate('F-test', xy=(3.5, 2.01), color='k', alpha=0.4, weight='bold')
 
 # F-test Pulso
@@ -284,7 +284,7 @@ ax_4.scatter(ej_pulso_pred.tiempo[(ej_pulso_pred.condicion_falla == 0) & (f_test
              ej_pulso_pred.nivel[(ej_pulso_pred.condicion_falla == 0) & (f_test_pred_pulse == 1)],
              c='#ad190f', alpha=0.7, s=markersize)
 ax_4.axhline(y=2, color='k', alpha=0.2, linestyle='--')
-ax_4.annotate('2m', xy=(24, 2.002), color='k', alpha=0.4)
+ax_4.annotate('2m', xy=(datos_tanque.t_f, 2.002), color='k', alpha=0.4)
 ax_4.annotate('F-test', xy=(3.5, 2.01), color='k', alpha=0.4, weight='bold')
 
 
@@ -304,7 +304,7 @@ l2 = ax_6.scatter(ej_varianza_pred.tiempo[(ej_varianza_pred.condicion_falla == 0
              ej_varianza_pred.nivel[(ej_varianza_pred.condicion_falla == 0) & (f_test_pred_var == 1)],
              c='#ad190f', alpha=0.7, label='Falsos positivos', s=markersize)
 l4 = ax_6.axhline(y=2, color='k', alpha=0.2, linestyle='--')
-ax_6.annotate('2m', xy=(24, 2.002), color='k', alpha=0.4)
+ax_6.annotate('2m', xy=(datos_tanque.t_f, 2.002), color='k', alpha=0.4)
 ax_6.annotate('F-test', xy=(3.5, 2.01), color='k', alpha=0.4, weight='bold')
 
 ax_1.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='off')
@@ -321,7 +321,7 @@ for ax in [ax_1, ax_2, ax_3, ax_4, ax_5, ax_6]:
     ax.spines['bottom'].set_visible(False)
     ax.spines['left'].set_visible(False)
 
-    ax.set_xlim([3.3, 25])
+    ax.set_xlim([3.3, datos_tanque.t_f+1])
 
 legend_1 = fig.legend((l1, l2), ('Verdadero positivo', 'Falso positivo'), 'upper left', frameon=False)
 legend_2 = fig.legend((l3, l4), ('Nivel sin falla', 'Set point'), 'upper right', frameon=False)

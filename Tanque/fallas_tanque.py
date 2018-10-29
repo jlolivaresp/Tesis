@@ -23,7 +23,7 @@ nivel = simultank(area=datos.area, nivel_inicial=datos.nivel_inicial, resist_hid
                   caudal_entrada=datos.q_sim, tiempo_inicial=datos.t_i, tiempo_final=datos.t_f,
                   paso=datos.paso, analitic_sol=False) + np.random.normal(0, 0.005, len(datos.t_sim))
 nivel_ee = nivel[int(datos.tss_2):]
-
+print(datos.tss_2)
 '''____________________________________________ Falla de deriva _____________________________________________________'''
 
 # Columna de tipo de falla
@@ -33,7 +33,6 @@ tipo = np.array(['deriva' for i in datos.t_sim_ee])
 for h in datos.delta_h:
     # Generamos la columna de caracteristica_1
     caracteristica_1 = np.ones((len(datos.t_sim_ee)))*h
-
     for t_f in datos.t_f_falla_deriva:
         # Generamos la columna de caracteristica_2
         caracteristica_2 = np.ones((len(datos.t_sim_ee)))*t_f
@@ -126,3 +125,5 @@ for amp in datos.amplitud_var:
 
         # Anexamos los datos de falla nuevos al DataFrame general
         df_tanque_falla = df_tanque_falla.append(df_tanque_falla_var, ignore_index=True)
+
+print(df_tanque_falla.describe())

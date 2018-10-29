@@ -14,8 +14,8 @@ nivel_inicial = 0                                       # Nivel inicial del tanq
 
 '''Datos de la Simulacion'''
 
-tiempo = 24                                             # Tiempo de simulacion [h] (240h -> 1d)
-paso = 0.1                                              # Paso de integracion [h]
+tiempo = 12                                             # Tiempo de simulacion [h] (240h -> 1d)
+paso = 0.01                                              # Paso de integracion [h]
 decimal = str(paso)[::-1].find('.')                     # Numero de decimales del paso
 t_i = 0                                                 # Tiempo inciial de la simulacion [h]
 t_f = tiempo                                            # Tiempo final de la simulacion [h]
@@ -39,31 +39,31 @@ r_sim_extend = np.ones(tiempo_extend/paso)*r            # Vector de resistencia 
 '''Diferencias a detectar'''
 
 detect_delta_media = np.linspace(1e-2, 5e-2, 20)
-detect_delta_var = np.linspace(2.73006e-7, 6.82516e-7, 20)
+detect_delta_var = np.linspace(1.434337e-7, 6.82516e-7, 20)
 
 detect_delta_media_residuos = np.linspace(4.4385e-5, 2.21925e-4, 20)
 detect_delta_var_residuos = np.linspace(1.92133e-5, 4.80333e-5, 20)
 
 '''Falla de Deriva'''
 
-t_i_falla_deriva = 8                                        # Tiempo de inicio de la falla [h]
-t_f_falla_deriva = [8.2, 12.1, 16.1, 24]                    # Tiempos de finalizacion de la falla [h]
+t_i_falla_deriva = 4                                        # Tiempo de inicio de la falla [h]
+t_f_falla_deriva = [4.2, 6.1, 8.1, 12]                    # Tiempos de finalizacion de la falla [h]
 delta_h_porcentaje = [1, 1.75, 2.5]                            # Variacion total del nivel del tanque [%]
 delta_h = [i*2/100 for i in delta_h_porcentaje]             # Variacion total del nivel del tanque [m]
                                                             # *2 porque la media es 2m
 '''Falla de Pulso'''
 
-t_i_falla_pulso = 8                                         # Tiempo de inicio de la falla [h]
-t_f_falla_pulso = 24                                        # Tiempos de finalizacion de la falla [h]
-N_pulsos = [16, 40, 80, 100]                                # Numero de muestras con pulso
+t_i_falla_pulso = 4                                         # Tiempo de inicio de la falla [h]
+t_f_falla_pulso = 12                                        # Tiempos de finalizacion de la falla [h]
+N_pulsos = [100, 200, 300, 400]                                # Numero de muestras con pulso
 amplitud_pulso = [0.01, 0.025, 0.05]                        # Desviacion estandar de los pulsos
 random_seed = 0                                             # Valor semilla del generador de numeros aleatorios
 modo = 'fixed'                                              # Amplitud de pulsos de distribucion normal aleatoria
 
 '''Falla de Varianza'''
 
-t_i_falla_var = 8                                        # Tiempo de inicio de la falla [h]
-t_f_falla_var = [8.2, 12.1, 16.1, 18]                    # Tiempos de finalizacion de la falla [h]
+t_i_falla_var = 4                                        # Tiempo de inicio de la falla [h]
+t_f_falla_var = [4.2, 6.1, 8.1, 12]                    # Tiempos de finalizacion de la falla [h]
 amplitud_var = [0.01, 0.025, 0.05]                       # Desviacion estandar
 
 """____________________________________Variables de las Fallas con Tiempo Extendido _________________________________"""

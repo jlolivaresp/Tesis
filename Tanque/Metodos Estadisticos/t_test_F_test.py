@@ -18,6 +18,7 @@ _, t_test_pred, _, N = f.fault_detector(B).t_test(A, np.std(A), 0.95, 0.02)
 print(t_test_pred)
 print('end')
 '''
+
 print(fallas_tanque.df_tanque_falla.describe())
 groups = fallas_tanque.df_tanque_falla.groupby(['tipo_falla', 'caracteristica_1', 'caracteristica_2'])
 tp_mat = np.array([])
@@ -28,6 +29,7 @@ delta = np.array([])
 N_vector_ttest = np.array([])
 
 for j in datos_tanque.detect_delta_media:
+    print(j)
     for group in groups:
         _, t_test_pred, _, N = f.fault_detector(group[1].nivel).t_test(group[1].nivel_sin_falla,
                                                                        group[1].nivel_sin_falla.std(), 0.95, j)
@@ -53,6 +55,7 @@ tipo_falla = np.array([])
 N_vector_ftest = np.array([])
 
 for j in datos_tanque.detect_delta_var:
+    print(j)
     for group in groups:
         _, F_test_pred, _, N = f.fault_detector(group[1].nivel).f_test(group[1].nivel_sin_falla,
                                                                        group[1].nivel_sin_falla.std(), j, 0.95)
@@ -79,4 +82,4 @@ FDR_FAR_fallas_tanque = pd.DataFrame(data={'ttest_FDR': FDR_ttest, 'ttest_FAR': 
                                               'ftest_FDR', 'ftest_FAR', 'intensidad_falla', 'N_ttest', 'N_ftest'])
 
 FDR_FAR_fallas_tanque.set_index(['delta', 'tipo_falla'], inplace=True)
-#print(FDR_FAR_fallas_tanque)
+print(FDR_FAR_fallas_tanque.describe())

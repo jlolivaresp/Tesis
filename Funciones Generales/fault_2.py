@@ -83,10 +83,10 @@ class fault_generator(object):
     def drift(self, start, stop, step, change):
 
         import numpy as np
-
+        step = int(1/step)
         vector_faulty = np.copy(self.Vector_non_faulty)
-        vector_faulty[int(start/step):int(stop/step)] += np.linspace(0, change, (stop-start)/step)
-        vector_faulty[int(stop/step):] += change
+        vector_faulty[np.round(start*step):np.round(stop*step)] += np.linspace(0, change, np.round((stop-start)*step))
+        vector_faulty[np.ceil(stop*step):] += change
         slope = change/(stop-start)
         drifted_positions_bool = vector_faulty - self.Vector_non_faulty
         drifted_positions_bool = drifted_positions_bool != 0
@@ -96,10 +96,11 @@ class fault_generator(object):
     def variance(self, start, stop, step, stand_dev, random_seed=0):
 
         import numpy as np
-
+        step = int(1/step)
+        print(start*step, stop*step, len(np.random.normal(0, stand_dev, (stop-start)*step)))
         np.random.seed(random_seed)
         vector_faulty = np.copy(self.Vector_non_faulty)
-        vector_faulty[int(start/step):int(stop/step)] += np.random.normal(0, stand_dev, int((stop-start)/step))
+        vector_faulty[np.round(start*step):np.round(stop*step)] += np.random.normal(0, stand_dev, len(vector_faulty[np.round(start*step):np.round(stop*step)]))
         faulty_fraction = (stop-start)/(step*len(vector_faulty))
         varianced_positions_bool = vector_faulty - self.Vector_non_faulty
         varianced_positions_bool = varianced_positions_bool != 0
@@ -110,10 +111,10 @@ class fault_generator(object):
 
         import numpy as np
         import random
-
+        step = int(1/step)
         vector_faulty = np.copy(self.Vector_non_faulty)
-        after_fault = vector_faulty[int(start/step):int(stop/step)]
-        position_after_fault = np.asarray(list(enumerate(after_fault,start=int(start/step))))
+        after_fault = vector_faulty[int(start*step):int(stop*step)]
+        position_after_fault = np.asarray(list(enumerate(after_fault,start=int(start*step))))
 
         random.seed(random_seed)
         rand_sample_after_fault = position_after_fault[random.sample(range(0, len(position_after_fault)), N), :]

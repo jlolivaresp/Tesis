@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import t_test_F_test
-import residuos_t_test_F_test
+#import residuos_t_test_F_test
 import pandas as pd
 import t_test_F_test_ML
-import t_test_F_test_ML_residuos
+#import t_test_F_test_ML_residuos
 
 ttest_FDR_avg = t_test_F_test.FDR_FAR_fallas_tanque.ttest_FDR.mean()
 ttest_FAR_avg = t_test_F_test.FDR_FAR_fallas_tanque.ttest_FAR.mean()
@@ -42,7 +42,7 @@ for i, a in enumerate(autotexts):
 ax.set(aspect="equal", title='Promedios de FDR y FAR Globales (Nivel)')
 
 '''Para el vector de residuos'''
-
+'''
 ttest_FDR_avg_resid = residuos_t_test_F_test.FDR_FAR_fallas_tanque_residuos.ttest_FDR.mean()
 ttest_FAR_avg_resid = residuos_t_test_F_test.FDR_FAR_fallas_tanque_residuos.ttest_FAR.mean()
 ftest_FDR_avg_resid = residuos_t_test_F_test.FDR_FAR_fallas_tanque_residuos.ftest_FDR.mean()
@@ -78,8 +78,8 @@ for i, a in enumerate(autotexts):
         a.set_text('')
     tx[i].set_fontsize(8)
 ax.set(aspect="equal", title='Promedios de FDR y FAR Globales (Residuos)')
-
-#plt.show()
+'''
+plt.show()
 
 ttest_FDR_avg_ML = t_test_F_test_ML.FDR_0
 ttest_FAR_avg_ML = t_test_F_test_ML.FAR_0
