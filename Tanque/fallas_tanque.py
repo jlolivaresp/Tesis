@@ -1,6 +1,6 @@
 """Este script genera los data sets de fallas del tanque"""
 
-from simulador_nivel_tanque import simultank
+from simultank_F1_variable import simultank
 import fault_2 as f
 import datos_tanque as datos
 import numpy as np
