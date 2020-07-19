@@ -1,6 +1,6 @@
 # Deteccion de Fallas en Procesos Continuos: Aplicacion a la Planta Tennessee Eastman
 
-![](https://github.com/jlolivaresp/Tesis/blob/master/2.%20Ejemplo%20Comparativo%20por%20Falla%20Deteccion%20t-test_F-test.png =800x1000)
+<img src="https://github.com/jlolivaresp/Tesis/blob/master/2.%20Ejemplo%20Comparativo%20por%20Falla%20Deteccion%20t-test_F-test.png" width="500" height="400" />
 
 ## Introduction
 
