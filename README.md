@@ -1,5 +1,7 @@
 # Deteccion de Fallas en Procesos Continuos: Aplicacion a la Planta Tennessee Eastman
 
+![alt text](https://github.com/jlolivaresp/Tesis/blob/master/2.%20Ejemplo%20Comparativo%20por%20Falla%20Deteccion%20t-test_F-test.png)
+
 ## Introduction
 
 > This project is a preliminary study of Fault Detection, in continuous processes, through statistical methods of t-test and F-test to detect changes in mean and variance as well as through the kNN algorithm of Machine Learning, applied to faulty datasets of the Tennessee Eastman (TEP) plant, as a first step for the future development of a more complex solution for predictive maintenance.
