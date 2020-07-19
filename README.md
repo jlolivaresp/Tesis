@@ -2,19 +2,19 @@
 
 ## Introduction
 
-> Este proyecto es un estudio preliminar de Deteccion de Fallas, en procesos continuos, a traves de metodos estadisticos de t-test y F-test para detectar cambios en la media y la varianza asi como a traves del algoritmo kNN de Machine Learning, aplicados a datasets con fallas de la planta Tennessee Eastman (TEP), como un primer paso para el desarrollo futuro de una solucion mas compleja para mantenimiento predictivo.
+> This project is a preliminary study of Fault Detection, in continuous processes, through statistical methods of t-test and F-test to detect changes in mean and variance as well as through the kNN algorithm of Machine Learning, applied to faulty datasets of the Tennessee Eastman (TEP) plant, as a first step for the future development of a more complex solution for predictive maintenance.
 
-> En el estudio se validan los algoritmos en un modelo sencillo de facil compresion, conformado por un tanque abierto a la atmosfera, y luego se analizan los datos del TEP.
+> In the study, the algorithms are validated in a simple model of easy compression, formed by a tank open to the atmosphere, and then the TEP data are analyzed.
 
-> El proyecto fue llevado a cabo en Python 3.
+> The project was carried out in Python 3.
 
 ## Code Samples
 
 > 
-Este modulo incluye dos clases:
+This module includes two classes:
 
-- fault_detector: para detectar fallas con metodos estadisticos convencionales de t-test y F-test.
-- fault_generator: para inyectar fallas de tipo deriva, pulso y varianza segun los parametros especificados.
+- fault_detector: to detect faults with conventional statistical methods of t-test and F-test.
+- fault_generator: to inject drift, pulse and variance type faults according to the specified parameters
 
 class fault_detector(object):
 
