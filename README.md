@@ -1,5 +1,7 @@
 # Deteccion de Fallas en Procesos Continuos: Aplicacion a la Planta Tennessee Eastman
 
+Example of fault detection by t-test and F-test on injected faults of type variance, drift and pulse.
+
 <img src="https://github.com/jlolivaresp/Tesis/blob/master/2.%20Ejemplo%20Comparativo%20por%20Falla%20Deteccion%20t-test_F-test.png" width="500" height="400" />
 
 ## Introduction
